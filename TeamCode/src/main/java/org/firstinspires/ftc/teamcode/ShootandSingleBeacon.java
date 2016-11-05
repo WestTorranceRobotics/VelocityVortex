@@ -148,7 +148,16 @@ public class ShootandSingleBeacon extends LinearOpMode {
 
     }
 
+    public boolean isRed() {
+        return robot.beaconSenser.red()>robot.beaconSenser.blue();
+    }
 
+    public boolean teamColorIsRed() {
+        return robot.teamSwitch.getState();
+    }
 
-
+    public boolean sameColor() {
+        return isRed() == teamColorIsRed();
+    }
+    //Todo: make a function to move the robot and push the button
     }

@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorAdafruitRGB;
 
 /**
  * This is NOT an opmode.
@@ -40,8 +44,9 @@ public class RobotHardware
 
 
 
-
+    public ColorSensor beaconSenser = null;
     public GyroSensor gyro = null;
+    public DigitalChannel teamSwitch = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -72,9 +77,11 @@ public class RobotHardware
         capBallMotor = hwMap.dcMotor.get("capmotor");
         transportMotor = hwMap.dcMotor.get("transmotor");
 
+        beaconSenser = hwMap.colorSensor.get("sensor");
         gyro = hwMap.gyroSensor.get("gyro");
+        teamSwitch = hwMap.digitalChannel.get("teamSwitch");
 
-        //leftCapBallServo = hwMap.servo.get("leftcapmotor");  If they ever use a left or right capballmotor, then use this.
+        // /leftCapBallServo = hwMap.servo.get("leftcapmotor");  If they ever use a left or right capballmotor, then use this.
         //rightCapBallServo = hwMap.servo.get("rightcapmotor");
 
 
