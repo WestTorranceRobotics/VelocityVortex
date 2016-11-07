@@ -55,6 +55,9 @@ public class ShootandSingleBeacon extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        robot.leftStick.setPosition(0);
+        robot.rightStick.setPosition(0);
+
         robot.setShooterSpeed(.8);
         runtoposition(48, .6);
 
@@ -73,21 +76,20 @@ public class ShootandSingleBeacon extends LinearOpMode {
         runtoposition(42, .6);
 
         turn(45);
-        //make "notWhite"
-        while(notWhite()){
+
+        while(notWhite()) {
             robot.leftMotor.setPower(.4);
             robot.rightMotor.setPower(.4);
+        }
 
         turn(-90);
 
-            //TODO make a function to go forward and use color senser to press the right color of the beacon
-
-
-        }
-
-
-
-
+        if(!sameColor()) {
+            robot.rightStick.setPosition(-1);
+        } else {
+            robot.leftStick.setPosition(-1);
+            }
+        //make function to go forward to press button.
     }
 
     public void setPos(double inches, double goes) {
@@ -136,10 +138,15 @@ public class ShootandSingleBeacon extends LinearOpMode {
         //make this function later
     }
 
-    public boolean notWhite(){
+    public boolean notWhite() {
         //make this function
-        return false;
-    }
+        return robot.lineSensor.getRawLightDetected() < 100;
+        //less is floor, more is the line
+
+        }
+
+
+
     public void wait(double time){
         double initialTime = runtime.time();
         while (runtime.time()- initialTime <time){
@@ -147,6 +154,7 @@ public class ShootandSingleBeacon extends LinearOpMode {
         }
 
     }
+
 
     public boolean isRed() {
         return robot.beaconSenser.red()>robot.beaconSenser.blue();

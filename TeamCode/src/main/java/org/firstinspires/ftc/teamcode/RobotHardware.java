@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -43,10 +44,13 @@ public class RobotHardware
     //public Servo  rightCapBallServo   = null;
 
 
-
+    public LightSensor lineSensor = null;
     public ColorSensor beaconSenser = null;
     public GyroSensor gyro = null;
     public DigitalChannel teamSwitch = null;
+
+    public Servo leftStick = null;
+    public Servo rightStick = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -80,6 +84,11 @@ public class RobotHardware
         beaconSenser = hwMap.colorSensor.get("sensor");
         gyro = hwMap.gyroSensor.get("gyro");
         teamSwitch = hwMap.digitalChannel.get("teamSwitch");
+        lineSensor = hwMap.lightSensor.get("lineSensor");
+
+        leftStick = hwMap.servo.get("leftStick");
+        rightStick = hwMap.servo.get("rightStick");
+
 
         // /leftCapBallServo = hwMap.servo.get("leftcapmotor");  If they ever use a left or right capballmotor, then use this.
         //rightCapBallServo = hwMap.servo.get("rightcapmotor");
@@ -104,6 +113,7 @@ public class RobotHardware
         rightShooterMotor.setPower(0);
         capBallMotor.setPower(0);
         transportMotor.setPower(0);
+
 
 
         // Set all motors to run without encoders.
