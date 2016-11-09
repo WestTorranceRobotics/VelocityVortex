@@ -52,62 +52,61 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Alison Drive Train", group="WTR")  // @Autonomous(...) is the other common choice
-
-
-
-public class Test extends LinearOpMode {
+@TeleOp(name="Test Drive", group="WTR")  // @Autonomous(...) is the other common choice
+//@Disabled
+public class DriveTrainforTestRobot extends LinearOpMode {
 
     /* Declare OpMode members. */
-    public ElapsedTime runtime = new ElapsedTime();
-    // DcMotor leftMotor = null;
-    // DcMotor rightMotor = null;
-      double power;
-    double turn;
+    private ElapsedTime runtime = new ElapsedTime();
+    public DcMotor leftMotor = null;
+    public DcMotor rightMotor = null;
+
+
     @Override
-    public void runOpMode() throws InterruptedException {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+    public void runOpMode() {
 
 
-        DcMotor rightmotor = hardwareMap.dcMotor.get("left");
-        DcMotor leftmotor= hardwareMap.dcMotor.get("right");
-        DcMotor intake = hardwareMap.dcMotor.get("intake");
+        /* eg: Initialize the hardware variables. Note that the strings used here as parameters
+         * to 'get' must correspond to the names assigned during the robot configuration
+         * step (using the FTC Robot Controller app on the phone).
+         */
+        leftMotor = hardwareMap.dcMotor.get("leftmotor");
+        rightMotor = hardwareMap.dcMotor.get("rightmotor");
+        // leftMotor  =hardwareMap.dcMotor.get("left_drive");
+        // rightMotor = hardwareMap.dcMotor.get("right_drive");
+        leftMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        // eg: Set the drive motor directions:
+        // "Reverse" the motor that runs backwards when connected directly to the battery
+        // leftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        // rightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
 
-        rightmotor.setDirection(DcMotor.Direction.REVERSE);
-
+        // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        runtime.reset();
 
+        // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            power = -gamepad1.left_stick_y;
-            turn = gamepad1.left_stick_x;
 
-            leftmotor.setPower(power + turn);
-            rightmotor.setPower(power - turn);
 
-            if(gamepad1.a) {
-                intake.setPower(1);
-            } else if(gamepad1.y) {
-                intake.setPower(-1);
-            } else {
-                intake.setPower(0);
+           if(Math.abs(-gamepad1.left_stick_y)<.15){
+               leftMotor.setPower(0);
+           }else {
+               leftMotor.setPower(-gamepad1.left_stick_y);
+           }
+            if(Math.abs(-gamepad1.right_stick_y)<.15){
+                rightMotor.setPower(0);
+            }else {
+                rightMotor.setPower(-gamepad1.right_stick_y);
+
+
             }
-            waitForStart(); }
+            // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
+            // leftMotor.setPower(-gamepad1.left_stick_y);
+            // rightMotor.setPower(-gamepad1.right_stick_y);
 
-            /*if(Math.abs(gamepad1.left_stick_y) < 0.15) {
-                leftmotor.setPower(0);
-            } else {
-                leftmotor.setPower(gamepad1.left_stick_y);
-            }
-
-            if(Math.abs(gamepad1.right_stick_y) < 0.15) {
-                rightmotor.setPower(0);
-            } else {
-                rightmotor.setPower(gamepad1.right_stick_y);
-            }
-
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+            idle();
         }
     }
-
+}

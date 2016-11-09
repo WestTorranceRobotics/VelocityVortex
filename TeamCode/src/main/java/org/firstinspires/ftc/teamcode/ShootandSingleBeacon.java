@@ -38,7 +38,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="AutoTemplate", group="WTR")  // @Autonomous(...) is the other common choice
+@Autonomous(name="ShootandSingleBeacon", group="WTR")  // @Autonomous(...) is the other common choice
 // @Disabled
 public class ShootandSingleBeacon extends LinearOpMode {
 
