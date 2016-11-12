@@ -90,18 +90,16 @@ public class DriveTrainforTestRobot extends LinearOpMode {
         while (opModeIsActive()) {
 
 
+            if(Math.abs(-gamepad1.left_stick_y)<.15){
+                 leftMotor.setPower(0);
+            }else {
+                 leftMotor.setPower(-gamepad1.left_stick_y);
+            }
 
-           if(Math.abs(-gamepad1.left_stick_y)<.15){
-               leftMotor.setPower(0);
-           }else {
-               leftMotor.setPower(-gamepad1.left_stick_y);
-           }
             if(Math.abs(-gamepad1.right_stick_y)<.15){
                 rightMotor.setPower(0);
             }else {
                 rightMotor.setPower(-gamepad1.right_stick_y);
-
-
             }
             // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
             // leftMotor.setPower(-gamepad1.left_stick_y);

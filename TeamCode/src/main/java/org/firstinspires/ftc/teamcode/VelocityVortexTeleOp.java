@@ -80,9 +80,7 @@ public class VelocityVortexTeleOp extends LinearOpMode {
             //sets the intake motor to 100% TO 0% based on button pressed
             if(gamepad1.right_bumper){
                 robot.intakeMotor.setPower(1);
-            }else if(gamepad1.right_trigger>=.2){
-                robot.intakeMotor.setPower(0);
-            } else{
+            }else{
                 robot.intakeMotor.setPower(0);
             }
 
@@ -93,6 +91,10 @@ public class VelocityVortexTeleOp extends LinearOpMode {
                 robot.leftShooterMotor.setPower(0);
                 robot.rightShooterMotor.setPower(0);
             }
+
+
+
+
 
             idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }

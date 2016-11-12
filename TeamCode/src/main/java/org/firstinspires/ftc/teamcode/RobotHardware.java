@@ -15,22 +15,9 @@ import org.firstinspires.ftc.robotcontroller.external.samples.SensorAdafruitRGB;
 
 /**
  * This is NOT an opmode.
- *
- * This class can be used to define all the specific hardware for a single robot.
- * In this case that robot is a Pushbot.
- * See PushbotTeleopTank_Iterative and others classes starting with "Pushbot" for usage examples.
- *
- * This hardware class assumes the following device names have been configured on the robot:
- * Note:  All names are lower case and some have single spaces between words.
- *
- * Motor channel:  Left  drive motor:        "left_drive"
- * Motor channel:  Right drive motor:        "right_drive"
- * Motor channel:  Manipulator drive motor:  "left_arm"
- * Servo channel:  Servo to open left claw:  "left_hand"
- * Servo channel:  Servo to open right claw: "right_hand"
  */
-public class RobotHardware
-{
+public class RobotHardware {
+
     /* Public OpMode members. */
     public DcMotor  leftMotor         = null;
     public DcMotor  rightMotor        = null;
@@ -38,10 +25,13 @@ public class RobotHardware
     public DcMotor  leftShooterMotor  = null;
     public DcMotor  rightShooterMotor = null;
     public DcMotor  capBallMotor      = null;
-    public DcMotor  transportMotor    = null;
 
-    //public Servo  leftCapBallServo    = null; if they use a left and right capballmotor then this is what we use.
-    //public Servo  rightCapBallServo   = null;
+    public Servo leftStick = null;
+    public Servo rightStick = null;
+    public Servo transportServo1 = null;
+    public Servo transportServo2 = null;
+
+
 
 
     public LightSensor lineSensor = null;
@@ -49,12 +39,20 @@ public class RobotHardware
     public GyroSensor gyro = null;
     public DigitalChannel teamSwitch = null;
 
-    public Servo leftStick = null;
-    public Servo rightStick = null;
+
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
+
+    public double rightStickUp = 1;
+    public double rightStickDown = 0;
+    public double leftStickUp = 1;
+    public double leftStickDown = 0;
+    public double transport1Up = 1;
+    public double transport1Down = 0;
+    public double transport2Up = 1;
+    public double transport2Down = 0;
 
 
     /* Constructor */
@@ -79,7 +77,6 @@ public class RobotHardware
         leftShooterMotor = hwMap.dcMotor.get("LShootmotor");
         rightShooterMotor = hwMap.dcMotor.get("RShootmotor");
         capBallMotor = hwMap.dcMotor.get("capmotor");
-        transportMotor = hwMap.dcMotor.get("transmotor");
 
         beaconSenser = hwMap.colorSensor.get("sensor");
         gyro = hwMap.gyroSensor.get("gyro");
@@ -88,6 +85,8 @@ public class RobotHardware
 
         leftStick = hwMap.servo.get("leftStick");
         rightStick = hwMap.servo.get("rightStick");
+        transportServo1 = hwMap.servo.get("transervo1");
+        transportServo2 = hwMap.servo.get("transervo2");
 
 
         // /leftCapBallServo = hwMap.servo.get("leftcapmotor");  If they ever use a left or right capballmotor, then use this.
@@ -100,7 +99,6 @@ public class RobotHardware
         leftShooterMotor.setDirection(DcMotor.Direction.FORWARD);
         rightShooterMotor.setDirection(DcMotor.Direction.REVERSE);
         capBallMotor.setDirection(DcMotor.Direction.FORWARD);
-        transportMotor.setDirection(DcMotor.Direction.FORWARD);
 
         leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -112,7 +110,6 @@ public class RobotHardware
         leftShooterMotor.setPower(0);
         rightShooterMotor.setPower(0);
         capBallMotor.setPower(0);
-        transportMotor.setPower(0);
 
 
 
@@ -124,7 +121,6 @@ public class RobotHardware
         leftShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         capBallMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        transportMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
     }
@@ -150,9 +146,19 @@ public class RobotHardware
         period.reset();
     }
 
-    public void tankDrive(double left, double right){
-        leftMotor.setPower(left);
-        rightMotor.setPower(right);
+    public void tankDrive(double left, double right) {
+
+        if (Math.abs(left) < .15) {
+            leftMotor.setPower(0);
+        } else {
+            leftMotor.setPower(left);
+        }
+
+        if (Math.abs(right) < .15) {
+            rightMotor.setPower(0);
+        } else {
+            rightMotor.setPower(right);
+        }
     }
 
     public void setShooterSpeed(double speed) {
@@ -160,5 +166,56 @@ public class RobotHardware
         rightShooterMotor.setPower(speed);
     }
 
+    public void rightServoUp(){
+        rightStick.setPosition(rightStickUp);
+    }
+
+    public void rightServoDown() {
+        rightStick.setPosition(rightStickDown);
+    }
+
+    public void leftServoUp() {
+        leftStick.setPosition(leftStickUp);
+    }
+
+    public void leftServoDown() {
+        leftStick.setPosition(leftStickDown);
+    }
+
+    public void setTransport1Up(){
+        transportServo1.setPosition(transport1Up);
+    }
+
+    public void setTransport1Down(){
+        transportServo1.setPosition(transport1Down);
+    }
+
+    public void setTransport2Up(){
+        transportServo2.setPosition(transport2Up);
+    }
+
+    public void setTransport2Down(){
+        transportServo2.setPosition(transport2Down);
+    }
+
+    public void setSticksUp() {
+        rightServoUp();
+        leftServoUp();
+    }
+
+    public void setSticksDown(){
+        rightServoDown();
+        leftServoDown();
+    }
+
+    public void setTransportsUp(){
+        setTransport1Up();
+        setTransport2Up();
+    }
+
+    public void setTransportsDown(){
+        setTransport1Down();
+        setTransport2Down();
+    }
 }
 
