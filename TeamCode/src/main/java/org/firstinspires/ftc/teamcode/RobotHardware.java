@@ -18,7 +18,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.SensorAdafruitRGB;
  */
 public class RobotHardware {
 
-    /* Public OpMode members. */
+    //Motors
     public DcMotor  leftMotor         = null;
     public DcMotor  rightMotor        = null;
     public DcMotor  intakeMotor       = null;
@@ -26,25 +26,22 @@ public class RobotHardware {
     public DcMotor  rightShooterMotor = null;
     public DcMotor  capBallMotor      = null;
 
-    public Servo leftStick = null;
-    public Servo rightStick = null;
+    //Servos
+    public Servo leftStick       = null;
+    public Servo rightStick      = null;
     public Servo transportServo1 = null;
     public Servo transportServo2 = null;
 
-
-
-
-    public LightSensor lineSensor = null;
-    public ColorSensor beaconSenser = null;
-    public GyroSensor gyro = null;
+    //Sensors
+    public LightSensor lineSensor    = null;
+    public ColorSensor beaconSenser  = null;
+    public GyroSensor gyro           = null;
     public DigitalChannel teamSwitch = null;
 
-
-
-    /* local OpMode members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
 
+    //Constants for servos
     public double rightStickUp = 1;
     public double rightStickDown = 0;
     public double leftStickUp = 1;
@@ -60,39 +57,32 @@ public class RobotHardware {
 
     }
 
-    //@Override
-    public void runOpMode() throws InterruptedException {
-
-    }
-
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
-        // Define and Initialize Motors
-        leftMotor   = hwMap.dcMotor.get("leftmotor");
-        rightMotor  = hwMap.dcMotor.get("rightmotor");
+        //Motors
+        leftMotor = hwMap.dcMotor.get("leftmotor");
+        rightMotor = hwMap.dcMotor.get("rightmotor");
         intakeMotor = hwMap.dcMotor.get("inmotor");
         leftShooterMotor = hwMap.dcMotor.get("LShootmotor");
         rightShooterMotor = hwMap.dcMotor.get("RShootmotor");
         capBallMotor = hwMap.dcMotor.get("capmotor");
 
-        beaconSenser = hwMap.colorSensor.get("sensor");
-        gyro = hwMap.gyroSensor.get("gyro");
-        teamSwitch = hwMap.digitalChannel.get("teamSwitch");
-        lineSensor = hwMap.lightSensor.get("lineSensor");
-
+        //Servos
         leftStick = hwMap.servo.get("leftStick");
         rightStick = hwMap.servo.get("rightStick");
         transportServo1 = hwMap.servo.get("transervo1");
         transportServo2 = hwMap.servo.get("transervo2");
 
+        //Sensors
+        beaconSenser = hwMap.colorSensor.get("sensor");
+        gyro = hwMap.gyroSensor.get("gyro");
+        teamSwitch = hwMap.digitalChannel.get("teamSwitch");
+        lineSensor = hwMap.lightSensor.get("lineSensor");
 
-        // /leftCapBallServo = hwMap.servo.get("leftcapmotor");  If they ever use a left or right capballmotor, then use this.
-        //rightCapBallServo = hwMap.servo.get("rightcapmotor");
-
-
+        //Set the directions for each motor
         leftMotor.setDirection(DcMotor.Direction.FORWARD);
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -100,6 +90,7 @@ public class RobotHardware {
         rightShooterMotor.setDirection(DcMotor.Direction.REVERSE);
         capBallMotor.setDirection(DcMotor.Direction.FORWARD);
 
+        //allow shooter motors to coast
         leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
@@ -111,10 +102,7 @@ public class RobotHardware {
         rightShooterMotor.setPower(0);
         capBallMotor.setPower(0);
 
-
-
-        // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
+        //Set motors to their appropriate modes
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -125,25 +113,8 @@ public class RobotHardware {
 
     }
 
-    /***
-     *
-     * waitForTick implements a periodic delay. However, this acts like a metronome with a regular
-     * periodic tick.  This is used to compensate for varying processing times for each cycle.
-     * The function looks at the elapsed cycle time, and sleeps for the remaining time interval.
-     *
-     * @param periodMs  Length of wait cycle in mSec.
-     * @throws InterruptedException
-     */
-    public void waitForTick(long periodMs) throws InterruptedException {
-
-        long  remaining = periodMs - (long)period.milliseconds();
-
-        // sleep for the remaining portion of the regular cycle period.
-        if (remaining > 0)
-            Thread.sleep(remaining);
-
-        // Reset the cycle clock for the next pass.
-        period.reset();
+    public void initLooporwhateveryouwanttocallit() {
+        //TODO make an init for servos and other hardware for use during inti_loop
     }
 
     public void tankDrive(double left, double right) {

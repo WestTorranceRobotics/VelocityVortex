@@ -42,7 +42,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //@Disabled
 public class VelocityVortexIterativeTeleOp extends OpMode
 {
-    /* Declare OpMode members. */
+
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime transportStateTime = new ElapsedTime();
 
@@ -52,7 +52,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode
         STATE_UP,
         STATE_WAIT,
         STATE_DOWN,
-        STATE_END
+        STATE_STANDBY
     }
 
     private transportState currentTransportState;
@@ -76,7 +76,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode
     @Override
     public void start() {
         runtime.reset();
-        newTransportState(transportState.STATE_END);
+        newTransportState(transportState.STATE_STANDBY);
     }
 
     /*
@@ -114,6 +114,10 @@ public class VelocityVortexIterativeTeleOp extends OpMode
         // Reset the state time, and then change to next state.
         transportStateTime.reset();
         currentTransportState = newState;
+    }
+
+    private void whateveryouwanttocallit() {
+        //TODO make the switch statement for the trnasport state machine
     }
 
 
