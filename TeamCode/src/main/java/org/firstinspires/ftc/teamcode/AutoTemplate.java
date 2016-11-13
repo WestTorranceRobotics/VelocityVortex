@@ -46,7 +46,7 @@ public class AutoTemplate extends LinearOpMode {
 
     RobotHardware robot = new RobotHardware();
     private ElapsedTime runtime = new ElapsedTime();
-    
+
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
@@ -60,6 +60,7 @@ public class AutoTemplate extends LinearOpMode {
 
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //TODO change this inches to tick formula to be representative of actual robot
         int ticks = (int)(inches*(1/4*3.14159265359)*(16/24)*(1120));
         int currentleft = robot.leftMotor.getCurrentPosition();
         int currentright = robot.rightMotor.getCurrentPosition();
