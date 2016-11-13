@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.Hardware;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TeleOp", group="WTR")  // @Autonomous(...) is the other common choice
+@TeleOp(name="Linear TeleOp", group="WTR")
 // @Disabled
 
 public class VelocityVortexTeleOp extends LinearOpMode {
@@ -74,7 +74,7 @@ public class VelocityVortexTeleOp extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            //sets the drivetrainmotors based on the joysticks
+            //sets the drive train motors based on the joysticks
             robot.tankDrive(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
 
             //sets the intake motor to 100% TO 0% based on button pressed
@@ -91,10 +91,6 @@ public class VelocityVortexTeleOp extends LinearOpMode {
                 robot.leftShooterMotor.setPower(0);
                 robot.rightShooterMotor.setPower(0);
             }
-
-
-
-
 
             idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }

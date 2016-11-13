@@ -38,7 +38,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name="Iterative", group="WTR")  // @Autonomous(...) is the other common choice
+@TeleOp(name="Iterative TeleOp", group="WTR")  // @Autonomous(...) is the other common choice
 //@Disabled
 public class VelocityVortexIterativeTeleOp extends OpMode
 {
@@ -102,10 +102,6 @@ public class VelocityVortexIterativeTeleOp extends OpMode
         }
     }
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
-
     @Override
     public void stop() {
     }
@@ -117,9 +113,6 @@ public class VelocityVortexIterativeTeleOp extends OpMode
     }
 
     private void whateveryouwanttocallit() {
-        //TODO make the switch statement for the trnasport state machine
+        //TODO make the switch statement for the transport state machine
     }
-
-
-
 }

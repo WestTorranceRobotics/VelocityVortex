@@ -82,19 +82,21 @@ public class ShootandParkinCenter extends LinearOpMode {
 
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        int ticks = (int)(inches*(1/4*3.14159265359)*(16/24)*(1120));
+        int ticks = (int) (inches * (1 / 4 * 3.14159265359) * (16 / 24) * (1120));
         int currentleft = robot.leftMotor.getCurrentPosition();
         int currentright = robot.rightMotor.getCurrentPosition();
 
-        robot.leftMotor.setTargetPosition(ticks+ currentleft);
-        robot.rightMotor.setTargetPosition(ticks+ currentright);
+        robot.leftMotor.setTargetPosition(ticks + currentleft);
+        robot.rightMotor.setTargetPosition(ticks + currentright);
         robot.leftMotor.setPower(goes);
         robot.rightMotor.setPower(goes);
     }
-    public void endmove(){
+
+    public void endmove() {
         robot.leftMotor.setPower(0);
         robot.rightMotor.setPower(0);
     }
+
     public void runtoposition(double inches, double speed) {
         setPos(inches, speed);
         while (robot.leftMotor.isBusy() && robot.rightMotor.isBusy() && opModeIsActive()) {
@@ -106,11 +108,11 @@ public class ShootandParkinCenter extends LinearOpMode {
     public void turn(int degrees) {
         int intheading = robot.gyro.getHeading();
 
-        int multiplier = (degrees/Math.abs(degrees));
+        int multiplier = (degrees / Math.abs(degrees));
 
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        while (Math.abs(robot.gyro.getHeading()-intheading) <= Math.abs(degrees)) {
+        while (Math.abs(robot.gyro.getHeading() - intheading) <= Math.abs(degrees)) {
 
             robot.leftMotor.setPower(multiplier * .6);
             robot.rightMotor.setPower(-.6 * multiplier);
@@ -120,19 +122,15 @@ public class ShootandParkinCenter extends LinearOpMode {
         robot.rightMotor.setPower(0);
     }
 
-    public void transportBall(){
-        //make this function later
+    public void transportBall() {
+        //TODO make this function later
     }
 
-    public void wait(double time){
+    public void wait(double time) {
         double initialTime = runtime.time();
-        while (runtime.time()- initialTime <time){
+        while (runtime.time() - initialTime < time) {
 
         }
 
     }
-
-
-
-
-    }
+}

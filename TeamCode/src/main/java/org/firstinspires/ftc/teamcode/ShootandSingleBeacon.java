@@ -43,10 +43,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class ShootandSingleBeacon extends LinearOpMode {
 
     RobotHardware robot = new RobotHardware();
-
-
     private ElapsedTime runtime = new ElapsedTime();
-
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -89,7 +86,7 @@ public class ShootandSingleBeacon extends LinearOpMode {
         } else {
             robot.leftStick.setPosition(-1);
             }
-        //make function to go forward to press button.
+        //TODO make function to go forward to press button.
     }
 
     public void setPos(double inches, double goes) {
@@ -105,10 +102,12 @@ public class ShootandSingleBeacon extends LinearOpMode {
         robot.leftMotor.setPower(goes);
         robot.rightMotor.setPower(goes);
     }
+
     public void endmove(){
         robot.leftMotor.setPower(0);
         robot.rightMotor.setPower(0);
     }
+
     public void runtoposition(double inches, double speed) {
         setPos(inches, speed);
         while (robot.leftMotor.isBusy() && robot.rightMotor.isBusy() && opModeIsActive()) {
@@ -143,18 +142,14 @@ public class ShootandSingleBeacon extends LinearOpMode {
         return robot.lineSensor.getRawLightDetected() < 100;
         //less is floor, more is the line
 
-        }
-
-
+    }
 
     public void wait(double time){
         double initialTime = runtime.time();
         while (runtime.time()- initialTime <time){
 
         }
-
     }
-
 
     public boolean isRed() {
         return robot.beaconSenser.red()>robot.beaconSenser.blue();
@@ -163,6 +158,8 @@ public class ShootandSingleBeacon extends LinearOpMode {
     public boolean teamColorIsRed() {
         return robot.teamSwitch.getState();
     }
+
+    //TODO MAKE THIS WHOLE BEACON THING WORK
 
     public boolean sameColor() {
         return isRed() == teamColorIsRed();

@@ -37,6 +37,7 @@ public class RobotHardware {
     public ColorSensor beaconSenser  = null;
     public GyroSensor gyro           = null;
     public DigitalChannel teamSwitch = null;
+    //TODO add the switches for team color and other possible preferences
 
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
@@ -50,7 +51,6 @@ public class RobotHardware {
     public double transport1Down = 0;
     public double transport2Up = 1;
     public double transport2Down = 0;
-
 
     /* Constructor */
     public RobotHardware(){
@@ -109,12 +109,10 @@ public class RobotHardware {
         leftShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         capBallMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
     }
 
     public void initLooporwhateveryouwanttocallit() {
-        //TODO make an init for servos and other hardware for use during inti_loop
+        //TODO make an init for servos and other hardware for use during init_loop
     }
 
     public void tankDrive(double left, double right) {
@@ -189,4 +187,3 @@ public class RobotHardware {
         setTransport2Down();
     }
 }
-
