@@ -50,12 +50,10 @@ public class AutoTemplate extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
-
         waitForStart();
         runtime.reset();
-
-
     }
+
     public void setPos(double inches, double goes) {
 
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
