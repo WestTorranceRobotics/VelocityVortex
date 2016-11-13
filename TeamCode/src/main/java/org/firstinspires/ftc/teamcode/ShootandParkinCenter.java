@@ -43,8 +43,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class ShootandParkinCenter extends LinearOpMode {
 
     RobotHardware robot = new RobotHardware();
-
-
     private ElapsedTime runtime = new ElapsedTime();
 
 

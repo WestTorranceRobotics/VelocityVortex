@@ -45,11 +45,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class AutoTemplate extends LinearOpMode {
 
     RobotHardware robot = new RobotHardware();
-
-
     private ElapsedTime runtime = new ElapsedTime();
-
-
+    
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);

@@ -57,9 +57,7 @@ import com.qualcomm.robotcore.util.Hardware;
 
 public class VelocityVortexTeleOp extends LinearOpMode {
 
-    /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-
     RobotHardware robot = new RobotHardware();
 
     @Override
