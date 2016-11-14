@@ -40,8 +40,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="AutoTemplate", group="WTR")  // @Autonomous(...) is the other common choice
-// @Disabled
+@Autonomous(name="AutoTemplate", group="WTR")
+@Disabled
 public class AutoTemplate extends LinearOpMode {
 
     RobotHardware robot = new RobotHardware();

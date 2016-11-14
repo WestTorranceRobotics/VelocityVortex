@@ -44,7 +44,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous(name="code1", group="code1")  // @Autonomous(...) is the other common choice
-// @Disabled
+@Disabled
 public class Code1 extends LinearOpMode {
 
     DcMotor leftmotor;

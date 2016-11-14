@@ -77,7 +77,7 @@ public class RobotHardware {
         transportServo2 = hwMap.servo.get("transervo2");
 
         //Sensors
-        beaconSenser = hwMap.colorSensor.get("sensor");
+        beaconSenser = hwMap.colorSensor.get("color");
         gyro = hwMap.gyroSensor.get("gyro");
         teamSwitch = hwMap.digitalChannel.get("teamSwitch");
         lineSensor = hwMap.lightSensor.get("lineSensor");
