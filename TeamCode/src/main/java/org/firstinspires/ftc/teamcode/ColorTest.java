@@ -32,24 +32,35 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.hardware.DigitalChannelController;
+import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name="color test", group="WTR")  // @Autonomous(...) is the other common choice
+@Autonomous(name="color test", group="WTR")  // @Autonomous(...) is the other common choice
 //@Disabled
 public class ColorTest extends OpMode
 {
 
     private ElapsedTime runtime = new ElapsedTime();
-    public String color = "";
-    public ColorSensor beaconSenser  = null;
+    //public String color = "";
+   // public ColorSensor beaconSenser  = null;
+   // DeviceInterfaceModule cdim;
+    LightSensor light = null;
 
     @Override
     public void init() {
-        beaconSenser = hardwareMap.colorSensor.get("color");
+       // beaconSenser = hardwareMap.colorSensor.get("color");
+        //cdim = hardwareMap.deviceInterfaceModule.get("cdim");
+       // cdim.setDigitalChannelMode(7, DigitalChannelController.Mode.OUTPUT);
+       // cdim.setDigitalChannelState(7, false);
+        light = hardwareMap.lightSensor.get("light");
+        light.enableLed(true);
     }
 
     /*
@@ -73,13 +84,18 @@ public class ColorTest extends OpMode
      */
     @Override
     public void loop() {
-        if(beaconSenser.red() > beaconSenser.blue()) {
+       /* if(beaconSenser.red() > beaconSenser.blue()) {
             color = "red";
         } else {
             color = "blue";
         }
 
         telemetry.addData("color", color);
+        telemetry.addData("red", beaconSenser.red());
+        telemetry.addData("blue", beaconSenser.blue());
+        */
+        telemetry.addData("raw", light.getRawLightDetected());
+        telemetry.addData("light", light.getLightDetected());
     }
 
     @Override
