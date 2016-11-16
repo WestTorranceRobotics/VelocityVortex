@@ -42,8 +42,9 @@ public class RobotHardware {
     private ElapsedTime period  = new ElapsedTime();
 
     //Constants for servos
-    public double ramServoUp = 1;
-    public double ramServoDown = 0;
+    public double ramServoRight = 1;
+    public double ramServoLeft = -1;
+    public double ramServoMiddle = 0;
     public double transport1Up = 1;
     public double transport1Down = 0;
     public double transport2Up = 1;
@@ -55,7 +56,7 @@ public class RobotHardware {
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap) {
+    public void initRobotHardware(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
@@ -107,8 +108,8 @@ public class RobotHardware {
         capBallMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void theLoopOfInit() {
-        //TODO make an init for servos and other hardware for use during init_loop
+    public void anushalizeRobotHardware() {
+        ramServo.setPosition(ramServoMiddle);
         transportServo1.setPosition(transport1Down);
         transportServo2.setPosition(transport2Down);
     }
@@ -133,9 +134,9 @@ public class RobotHardware {
         rightShooterMotor.setPower(speed);
     }
 
-    public void setRamServoUp() { ramServo.setPosition(ramServoUp);}
+    public void setRamServoRight() { ramServo.setPosition(ramServoRight);}
 
-    public void setRamServoDown() { ramServo.setPosition(ramServoDown);}
+    public void setRamServoLeft() { ramServo.setPosition(ramServoLeft);}
 
     public void setTransport1Up(){
         transportServo1.setPosition(transport1Up);

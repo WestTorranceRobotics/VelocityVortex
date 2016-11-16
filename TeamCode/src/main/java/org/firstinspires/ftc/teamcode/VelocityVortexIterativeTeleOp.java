@@ -59,7 +59,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode
 
     @Override
     public void init() {
-        robot.init(hardwareMap);
+        robot.initRobotHardware(hardwareMap);
     }
 
     /*

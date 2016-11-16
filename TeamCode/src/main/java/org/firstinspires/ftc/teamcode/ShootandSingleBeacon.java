@@ -47,13 +47,11 @@ public class ShootandSingleBeacon extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.init(hardwareMap);
+        robot.initRobotHardware(hardwareMap);
 
         waitForStart();
         runtime.reset();
 
-        robot.leftStick.setPosition(0);
-        robot.rightStick.setPosition(0);
 
         robot.setShooterSpeed(.8);
         runtoposition(48, .6);
@@ -81,11 +79,7 @@ public class ShootandSingleBeacon extends LinearOpMode {
 
         turn(-90);
 
-        if(!sameColor()) {
-            robot.rightStick.setPosition(-1);
-        } else {
-            robot.leftStick.setPosition(-1);
-            }
+
         //TODO make function to go forward to press button.
     }
 

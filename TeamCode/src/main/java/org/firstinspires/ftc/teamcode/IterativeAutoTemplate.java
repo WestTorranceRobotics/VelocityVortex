@@ -47,15 +47,13 @@ public class IterativeAutoTemplate extends OpMode
 
     @Override
     public void init() {
-        robot.init(hardwareMap);
-
+        robot.initRobotHardware(hardwareMap);
     }
 
     @Override
     public void init_loop() {
-
+        robot.anushalizeRobotHardware();
     }
-
 
     @Override
     public void start() {
@@ -64,16 +62,9 @@ public class IterativeAutoTemplate extends OpMode
 
     @Override
     public void loop() {
-        telemetry.addData("Status", "Running: " + runtime.toString());
 
-        // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
-        // leftMotor.setPower(-gamepad1.left_stick_y);
-        // rightMotor.setPower(-gamepad1.right_stick_y);
     }
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
     @Override
     public void stop() {
     }

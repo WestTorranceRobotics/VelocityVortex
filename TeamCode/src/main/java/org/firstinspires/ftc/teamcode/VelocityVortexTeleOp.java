@@ -63,7 +63,7 @@ public class VelocityVortexTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        robot.init(hardwareMap);
+        robot.initRobotHardware(hardwareMap);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();

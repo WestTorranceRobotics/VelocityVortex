@@ -49,7 +49,7 @@ public class AutoTemplate extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.init(hardwareMap);
+        robot.initRobotHardware(hardwareMap);
         waitForStart();
         runtime.reset();
     }

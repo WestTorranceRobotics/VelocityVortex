@@ -50,7 +50,7 @@ public class ShootandParkonRamp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.init(hardwareMap);
+        robot.initRobotHardware(hardwareMap);
 
         waitForStart();
         runtime.reset();
