@@ -186,4 +186,12 @@ public class RobotHardware {
         setTransport1Down();
         setTransport2Down();
     }
+
+    public boolean transportsAreDown (){
+        return transportServo1.getPosition() == transport1Down && transportServo2.getPosition() == transport2Down;
+    }
+
+    public boolean transportsAreUp (){
+        return transportServo1.getPosition() == transport1Up && transportServo2.getPosition() == transport2Up;
+    }
 }

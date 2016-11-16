@@ -51,8 +51,8 @@ public class VelocityVortexIterativeTeleOp extends OpMode
     private enum transportState {
         STATE_UP,
         STATE_WAIT,
-        STATE_DOWN,
-        STATE_STANDBY
+        STATE_STANDBY,
+        STATE_STAY
     }
 
     private transportState currentTransportState;
@@ -100,6 +100,8 @@ public class VelocityVortexIterativeTeleOp extends OpMode
             robot.leftShooterMotor.setPower(0);
             robot.rightShooterMotor.setPower(0);
         }
+
+        singleTransportSwitch();
     }
 
     @Override
@@ -112,7 +114,39 @@ public class VelocityVortexIterativeTeleOp extends OpMode
         currentTransportState = newState;
     }
 
-    private void whateveryouwanttocallit() {
-        //TODO make the switch statement for the transport state machine
+    private void singleTransportSwitch() {
+        switch (currentTransportState){
+            case STATE_STANDBY:
+                if (gamepad2.a) {
+                    robot.setTransportsUp();
+                    newTransportState(transportState.STATE_UP);
+                } else if(gamepad2.b){
+                    robot.setTransportsUp();
+                    newTransportState(transportState.STATE_STAY);
+                }
+                break;
+
+            case STATE_UP:
+                if (robot.transportsAreUp()) {
+                    newTransportState(transportState.STATE_WAIT);
+                }
+                break;
+
+            case STATE_WAIT:
+                if(transportStateTime.time() >= .5) {
+                    robot.setTransportsDown();
+                    newTransportState(transportState.STATE_STANDBY);
+                }
+                break;
+
+            case STATE_STAY:
+                if(!gamepad2.b){
+                    robot.setTransportsDown();
+                    newTransportState(transportState.STATE_STANDBY);
+                }
+        }
     }
 }
+
+
+

@@ -48,17 +48,17 @@ public class ColorTest extends OpMode
 {
 
     private ElapsedTime runtime = new ElapsedTime();
-    //public String color = "";
-   // public ColorSensor beaconSenser  = null;
-   // DeviceInterfaceModule cdim;
+    public String color = "";
+    public ColorSensor beaconSenser  = null;
+    DeviceInterfaceModule cdim;
     LightSensor light = null;
 
     @Override
     public void init() {
-       // beaconSenser = hardwareMap.colorSensor.get("color");
-        //cdim = hardwareMap.deviceInterfaceModule.get("cdim");
-       // cdim.setDigitalChannelMode(7, DigitalChannelController.Mode.OUTPUT);
-       // cdim.setDigitalChannelState(7, false);
+        beaconSenser = hardwareMap.colorSensor.get("color");
+       cdim = hardwareMap.deviceInterfaceModule.get("cdim");
+        cdim.setDigitalChannelMode(7, DigitalChannelController.Mode.OUTPUT);
+        cdim.setDigitalChannelState(7, false);
         light = hardwareMap.lightSensor.get("light");
         light.enableLed(true);
     }
@@ -84,7 +84,7 @@ public class ColorTest extends OpMode
      */
     @Override
     public void loop() {
-       /* if(beaconSenser.red() > beaconSenser.blue()) {
+        if(beaconSenser.red() > beaconSenser.blue()) {
             color = "red";
         } else {
             color = "blue";
@@ -93,7 +93,7 @@ public class ColorTest extends OpMode
         telemetry.addData("color", color);
         telemetry.addData("red", beaconSenser.red());
         telemetry.addData("blue", beaconSenser.blue());
-        */
+
         telemetry.addData("raw", light.getRawLightDetected());
         telemetry.addData("light", light.getLightDetected());
     }
