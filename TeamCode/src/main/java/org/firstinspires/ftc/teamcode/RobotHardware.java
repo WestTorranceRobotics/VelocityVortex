@@ -27,8 +27,7 @@ public class RobotHardware {
     public DcMotor  capBallMotor      = null;
 
     //Servos
-    public Servo leftStick       = null;
-    public Servo rightStick      = null;
+    public Servo ramServo = null;
     public Servo transportServo1 = null;
     public Servo transportServo2 = null;
 
@@ -43,10 +42,8 @@ public class RobotHardware {
     private ElapsedTime period  = new ElapsedTime();
 
     //Constants for servos
-    public double rightStickUp = 1;
-    public double rightStickDown = 0;
-    public double leftStickUp = 1;
-    public double leftStickDown = 0;
+    public double ramServoUp = 1;
+    public double ramServoDown = 0;
     public double transport1Up = 1;
     public double transport1Down = 0;
     public double transport2Up = 1;
@@ -71,8 +68,7 @@ public class RobotHardware {
         capBallMotor = hwMap.dcMotor.get("capmotor");
 
         //Servos
-        leftStick = hwMap.servo.get("leftStick");
-        rightStick = hwMap.servo.get("rightStick");
+        ramServo = hwMap.servo.get("ramServo");
         transportServo1 = hwMap.servo.get("transervo1");
         transportServo2 = hwMap.servo.get("transervo2");
 
@@ -111,8 +107,10 @@ public class RobotHardware {
         capBallMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void initLooporwhateveryouwanttocallit() {
+    public void theLoopOfInit() {
         //TODO make an init for servos and other hardware for use during init_loop
+        transportServo1.setPosition(transport1Down);
+        transportServo2.setPosition(transport2Down);
     }
 
     public void tankDrive(double left, double right) {
@@ -135,21 +133,9 @@ public class RobotHardware {
         rightShooterMotor.setPower(speed);
     }
 
-    public void rightServoUp(){
-        rightStick.setPosition(rightStickUp);
-    }
+    public void setRamServoUp() { ramServo.setPosition(ramServoUp);}
 
-    public void rightServoDown() {
-        rightStick.setPosition(rightStickDown);
-    }
-
-    public void leftServoUp() {
-        leftStick.setPosition(leftStickUp);
-    }
-
-    public void leftServoDown() {
-        leftStick.setPosition(leftStickDown);
-    }
+    public void setRamServoDown() { ramServo.setPosition(ramServoDown);}
 
     public void setTransport1Up(){
         transportServo1.setPosition(transport1Up);
@@ -165,16 +151,6 @@ public class RobotHardware {
 
     public void setTransport2Down(){
         transportServo2.setPosition(transport2Down);
-    }
-
-    public void setSticksUp() {
-        rightServoUp();
-        leftServoUp();
-    }
-
-    public void setSticksDown(){
-        rightServoDown();
-        leftServoDown();
     }
 
     public void setTransportsUp(){
