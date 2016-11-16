@@ -13,8 +13,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorAdafruitRGB;
 
-/**
- * This is NOT an opmode.
+/*
+  This is NOT an opmode.
  */
 public class RobotHardware {
 
