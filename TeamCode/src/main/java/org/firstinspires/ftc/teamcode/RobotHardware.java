@@ -49,13 +49,15 @@ public class RobotHardware {
     public double transport1Down = 0;
     public double transport2Up = 1;
     public double transport2Down = 0;
+    public double inchToTickConversion = 1;
+    //TODO ^^^MAKE THIS NUMBER
 
     /* Constructor */
     public RobotHardware(){
 
     }
 
-    /* Initialize standard Hardware interfaces */
+    /* Initialize standard hardware interfaces */
     public void initRobotHardware(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
