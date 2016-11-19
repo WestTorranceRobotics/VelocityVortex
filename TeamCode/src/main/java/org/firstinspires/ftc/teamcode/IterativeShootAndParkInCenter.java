@@ -140,13 +140,20 @@ public class IterativeShootAndParkInCenter extends OpMode {
                 Fanctions.setPos(24, .6);
                 Fanctions.setDegrees(45);
                 break;
+                //Move forward two feet.
             case STATE_TURN_RIGHT_MORE:
                 if(Fanctions.doneTurning()){
                     Fanctions.endmove();
+                    newState(state.STATE_PARK_IN_CENTER_BACKWARDS);
+                } else {
+                    Fanctions.turn();
                 }
                 break;
+                //Turning right 45 degrees.
             case STATE_PARK_IN_CENTER_BACKWARDS:
+                Fanctions.setPos(-24, .6);
                 break;
+                //Move two feet backwards to park on center.
         }
     }
 
