@@ -103,6 +103,7 @@ public class IterativeShootAndParkInCenter extends OpMode {
                 //Driving to vortex.
             case STATE_WAIT_FOR_SHOOTERS:
                 if (robot.leftShooterMotor.getPower() >= .8 && robot.rightShooterMotor.getPower() >= .8) {
+                    robot.setTransportsUp();
                     newState(state.STATE_UP);
                 }
                 break;
@@ -116,7 +117,6 @@ public class IterativeShootAndParkInCenter extends OpMode {
             case STATE_WAIT:
                 if (stateTime.time() >= .5) {
                     robot.setTransportsDown();
-
                     newState(state.STATE_SHUT_OFF_SHOOTERS);
                 }
                 break;
