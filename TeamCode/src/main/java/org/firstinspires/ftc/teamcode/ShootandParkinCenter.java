@@ -54,6 +54,8 @@ public class ShootandParkinCenter extends LinearOpMode {
         runtime.reset();
 
         robot.setShooterSpeed(.8);
+
+        //DRIVE THO THE CENTER VORTEX
         runtoposition(48, .6);
 
         while (robot.leftShooterMotor.getPower() < .8 && robot.rightShooterMotor.getPower() < .8) {

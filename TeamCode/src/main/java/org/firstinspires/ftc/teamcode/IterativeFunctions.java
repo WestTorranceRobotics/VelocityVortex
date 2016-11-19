@@ -110,6 +110,7 @@ public class IterativeFunctions extends OpMode {
         robot.leftMotor.setPower(.6 * multiplier);
         robot.rightMotor.setPower(-.6 * multiplier);
     }
+
     public void turn(double power){
         int multiplier = (degrees/Math.abs(degrees));
         robot.leftMotor.setPower(power * multiplier);

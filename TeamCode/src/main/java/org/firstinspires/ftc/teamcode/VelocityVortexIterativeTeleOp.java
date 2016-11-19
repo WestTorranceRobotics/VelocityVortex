@@ -55,6 +55,8 @@ public class VelocityVortexIterativeTeleOp extends OpMode
         STATE_STAY
     }
 
+
+
     private transportState currentTransportState;
 
     @Override
@@ -135,6 +137,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode
             case STATE_WAIT:
                 if(transportStateTime.time() >= .5) {
                     robot.setTransportsDown();
+
                     newTransportState(transportState.STATE_STANDBY);
                 }
                 break;
