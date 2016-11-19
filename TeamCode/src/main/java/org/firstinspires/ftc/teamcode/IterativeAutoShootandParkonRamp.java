@@ -52,7 +52,9 @@ public class IterativeAutoShootandParkonRamp extends OpMode
         STATE_WARM_UP_SHOOTER_MOTOR,//waiting for the shooter motors to warm up, and setting the position
         STATE_SHOOT,//shooting
         STATE_TURN_TOWARDS_RAMP,// moving in position to park
-        STATE_PARK//parking
+        STATE_PARK,//parking
+        STATE_UP,
+        STATE_WAIT
     }
     private state currentState;
     private void newState(state newState) {
@@ -90,16 +92,25 @@ public class IterativeAutoShootandParkonRamp extends OpMode
             case STATE_MOVE_TO_SHOOTING_POSITION:
                 //moving to position, while waiting for drive motors not to be busy
                 if (!Fanctions.driveMotorsAreBusy()) {
-                    newState(state.STATE_SHOOT);
+                    newState(state.STATE_UP);
+                    robot.setTransportsUp();
                 }
                 break;
-            case STATE_SHOOT:
-                if (){
+            case STATE_UP:
+                if (robot.transportsAreUp()) {
+                    newState(state.STATE_WAIT);
+
+                }
+                break;
+            //Moving transport ramp up to shoot ball.
+            case STATE_WAIT:
+                if (statetime.time() >= .5) {
+                    robot.setTransportsDown();
                     newState(state.STATE_TURN_TOWARDS_RAMP);
                 }
                 break;
             case STATE_TURN_TOWARDS_RAMP:
-                if ()
+
             }
 
 
