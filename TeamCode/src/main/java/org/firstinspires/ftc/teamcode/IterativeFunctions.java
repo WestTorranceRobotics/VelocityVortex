@@ -93,25 +93,29 @@ public class IterativeFunctions extends OpMode {
 
         return (robot.leftMotor.isBusy() && robot.rightMotor.isBusy());
     }
-    
+
     public void setDegrees(int degrees){
+        //
         this.degrees = degrees;
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public boolean doneTurning (){
+        //returmimg if the motors are done turning
         int intheading = robot.gyro.getHeading();
         return (Math.abs(robot.gyro.getHeading()-intheading) >= Math.abs(degrees));
     }
 
     public void turn(){
+        //setting the motors to turning power
         int multiplier = (degrees/Math.abs(degrees));
         robot.leftMotor.setPower(.6 * multiplier);
         robot.rightMotor.setPower(-.6 * multiplier);
     }
 
     public void turn(double power){
+        //overloading thing
         int multiplier = (degrees/Math.abs(degrees));
         robot.leftMotor.setPower(power * multiplier);
         robot.rightMotor.setPower(-power * multiplier);
