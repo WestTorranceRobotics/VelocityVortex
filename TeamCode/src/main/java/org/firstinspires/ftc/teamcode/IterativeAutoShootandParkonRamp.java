@@ -48,14 +48,14 @@ public class IterativeAutoShootandParkonRamp extends OpMode
     IterativeFunctions Fanctions = new IterativeFunctions();
 
     private enum state {
-        STATE_MOVE_TO_SHOOTING_POSITION,
-        STATE_WARM_UP_SHOOTER_MOTOR,
-        STATE_SHOOT,
-        STATE_TURN_TOWARDS_RAMP,
-        STATE_PARK
+        STATE_MOVE_TO_SHOOTING_POSITION,//moving to the shooting position and waiting for drive motors not to be busy
+        STATE_WARM_UP_SHOOTER_MOTOR,//waiting for the shooter motors to warm up, and setting the position
+        STATE_SHOOT,//shooting
+        STATE_TURN_TOWARDS_RAMP,// moving in position to park
+        STATE_PARK//parking
     }
     private state currentState;
-    private void newTransportState(state newState) {
+    private void newState(state newState) {
         // Reset the state time, and then change to next state.
         statetime.reset();
         currentState = newState;
@@ -79,11 +79,27 @@ public class IterativeAutoShootandParkonRamp extends OpMode
 
     @Override
     public void loop() {
-        switch (currentState){
+        switch (currentState) {
+            case STATE_WARM_UP_SHOOTER_MOTOR:
+                //waiting for the shooter motors to warm up, and setting position for the drive motors.
+                if (robot.leftShooterMotor.getPower() >= .8 && robot.rightShooterMotor.getPower() >= .8) {
+                    newState(state.STATE_MOVE_TO_SHOOTING_POSITION);
+                    Fanctions.setPos(48,.6);
+                }
+                break;
             case STATE_MOVE_TO_SHOOTING_POSITION:
-                if (Fanctions.driveMotorsAreBusy())
-
-
+                //moving to position, while waiting for drive motors not to be busy
+                if (!Fanctions.driveMotorsAreBusy()) {
+                    newState(state.STATE_SHOOT);
+                }
+                break;
+            case STATE_SHOOT:
+                if (){
+                    newState(state.STATE_TURN_TOWARDS_RAMP);
+                }
+                break;
+            case STATE_TURN_TOWARDS_RAMP:
+                if ()
             }
 
 

@@ -40,8 +40,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Iterative Auto", group="WTR")  // @Autonomous(...) is the other common choice
 @Disabled
-public class IterativeFunctions extends OpMode
-{
+public class IterativeFunctions extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     RobotHardware robot = new RobotHardware();
 
@@ -69,29 +68,52 @@ public class IterativeFunctions extends OpMode
     public void stop() {
     }
 
-
-
+    public int degrees = 0;
 
     public void setPos(double inches, double goes) {
 
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        int ticks = (int)(inches*(robot.inchToTickConversion));
+        int ticks = (int) (inches * (robot.inchToTickConversion));
         int currentleft = robot.leftMotor.getCurrentPosition();
         int currentright = robot.rightMotor.getCurrentPosition();
 
-        robot.leftMotor.setTargetPosition(ticks+ currentleft);
-        robot.rightMotor.setTargetPosition(ticks+ currentright);
+        robot.leftMotor.setTargetPosition(ticks + currentleft);
+        robot.rightMotor.setTargetPosition(ticks + currentright);
         robot.leftMotor.setPower(goes);
         robot.rightMotor.setPower(goes);
     }
-    public void endmove(){
+
+    public void endmove() {
         robot.leftMotor.setPower(0);
         robot.rightMotor.setPower(0);
     }
-    public boolean driveMotorsAreBusy () {
+
+    public boolean driveMotorsAreBusy() {
 
         return (robot.leftMotor.isBusy() && robot.rightMotor.isBusy());
+    }
+    
+    public void setDegrees(int degrees){
+        this.degrees = degrees;
+        robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public boolean doneTurning (){
+        int intheading = robot.gyro.getHeading();
+        return (Math.abs(robot.gyro.getHeading()-intheading) >= Math.abs(degrees));
+    }
+
+    public void turn(){
+        int multiplier = (degrees/Math.abs(degrees));
+        robot.leftMotor.setPower(.6 * multiplier);
+        robot.rightMotor.setPower(-.6 * multiplier);
+    }
+    public void turn(double power){
+        int multiplier = (degrees/Math.abs(degrees));
+        robot.leftMotor.setPower(power * multiplier);
+        robot.rightMotor.setPower(-power * multiplier);
     }
 
 }
