@@ -65,8 +65,6 @@ public class ShootandParkinCenterFromCenter extends LinearOpMode {
 
         }
 
-        transportBall();
-
         wait(1);
 
         robot.setShooterSpeed(0);

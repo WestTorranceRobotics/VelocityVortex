@@ -39,7 +39,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Iterative Auto", group="WTR")  // @Autonomous(...) is the other common choice
-@Disabled
+//@Disabled
 public class IterativeShootAndParkInCenter extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime stateTime = new ElapsedTime();
@@ -68,7 +68,6 @@ public class IterativeShootAndParkInCenter extends OpMode {
         STATE_PARK_IN_CENTER_BACKWARDS,
         //Move two feet backwards to park on center.
     }
-
     private state currentState;
 
 
@@ -91,16 +90,19 @@ public class IterativeShootAndParkInCenter extends OpMode {
     @Override
     public void loop() {
         switch (currentState) {
+
             case STATE_SPOOL_UP_SHOOTERS:
                 robot.setShooterSpeed(.8);
                 newState(state.STATE_DRIVE_TO_VORTEX);
                 break;
                 //Rev these shooters.
+
             case STATE_DRIVE_TO_VORTEX:
                 Fanctions.setPos(48, .6);
                 newState(state.STATE_WAIT_FOR_SHOOTERS);
                 break;
                 //Driving to vortex.
+
             case STATE_WAIT_FOR_SHOOTERS:
                 if (robot.leftShooterMotor.getPower() >= .8 && robot.rightShooterMotor.getPower() >= .8) {
                     robot.setTransportsUp();
@@ -108,12 +110,14 @@ public class IterativeShootAndParkInCenter extends OpMode {
                 }
                 break;
                 //Waiting for shooters to get power.
+
             case STATE_UP:
                 if (robot.transportsAreUp()) {
                     newState(state.STATE_WAIT);
                 }
                 break;
                 //Moving transport ramp up to shoot ball.
+
             case STATE_WAIT:
                 if (stateTime.time() >= .5) {
                     robot.setTransportsDown();
@@ -121,12 +125,14 @@ public class IterativeShootAndParkInCenter extends OpMode {
                 }
                 break;
                 //Waiting half a second to move transport ramp back down.
+
             case STATE_SHUT_OFF_SHOOTERS:
                 robot.setShooterSpeed(0);
                 newState(state.STATE_TURN_RIGHT);
                 Fanctions.setDegrees(90);
                 break;
                 //Turning off shooter motors.
+
             case STATE_TURN_RIGHT:
                 if(Fanctions.doneTurning()) {
                     Fanctions.endmove();
@@ -136,11 +142,13 @@ public class IterativeShootAndParkInCenter extends OpMode {
                 }
                 break;
                 //Turning right 90 degrees.
+
             case STATE_MOVE_FORWARD:
                 Fanctions.setPos(24, .6);
                 Fanctions.setDegrees(45);
                 break;
                 //Move forward two feet.
+
             case STATE_TURN_RIGHT_MORE:
                 if(Fanctions.doneTurning()){
                     Fanctions.endmove();
@@ -150,6 +158,7 @@ public class IterativeShootAndParkInCenter extends OpMode {
                 }
                 break;
                 //Turning right 45 degrees.
+
             case STATE_PARK_IN_CENTER_BACKWARDS:
                 Fanctions.setPos(-24, .6);
                 break;
@@ -157,61 +166,15 @@ public class IterativeShootAndParkInCenter extends OpMode {
         }
     }
 
-
     public void stop() {
     }
-
     private void newState(state newState) {
         // Reset the state time, and then change to next state.
         stateTime.reset();
         currentState = newState;
     }
 
-    public void setPos(double inches, double goes) {
-
-        robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        int ticks = (int) (inches * (1 / 4 * 3.14159265359) * (16 / 24) * (1120));
-        int currentleft = robot.leftMotor.getCurrentPosition();
-        int currentright = robot.rightMotor.getCurrentPosition();
-
-        robot.leftMotor.setTargetPosition(ticks + currentleft);
-        robot.rightMotor.setTargetPosition(ticks + currentright);
-        robot.leftMotor.setPower(goes);
-        robot.rightMotor.setPower(goes);
-    }
-
-    public void endmove() {
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
-    }
-
-    public void runtoposition(double inches, double speed) {
-        setPos(inches, speed);
-        while (robot.leftMotor.isBusy() && robot.rightMotor.isBusy()) {
-
-        }
-    }
-
-        public void turn(int degrees) {
-            int intheading = robot.gyro.getHeading();
-
-            int multiplier = (degrees / Math.abs(degrees));
-
-            robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            while (Math.abs(robot.gyro.getHeading() - intheading) <= Math.abs(degrees)) {
-
-                robot.leftMotor.setPower(multiplier * .6);
-                robot.rightMotor.setPower(-.6 * multiplier);
-
-            }
-            robot.leftMotor.setPower(0);
-            robot.rightMotor.setPower(0);
-        }
-
-
-    }
+}
 
 
 

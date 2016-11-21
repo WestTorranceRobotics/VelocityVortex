@@ -74,7 +74,7 @@ public class ShootandParkonRamp extends LinearOpMode {
 
         turn(90);
 
-        runtoposition(36, .6);
+        runtoposition(-36, .6);
 
 
     }
