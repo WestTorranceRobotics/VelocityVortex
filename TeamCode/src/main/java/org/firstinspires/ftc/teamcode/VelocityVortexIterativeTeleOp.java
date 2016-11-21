@@ -49,6 +49,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode
     RobotHardware robot = new RobotHardware();
 
     private enum transportState {
+        STATE_SPOOL_UP,
         STATE_UP,
         STATE_WAIT,
         STATE_STANDBY,
@@ -103,7 +104,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode
             robot.rightShooterMotor.setPower(0);
         }
 
-        singleTransportSwitch();
+        transportSwitch();
     }
 
     @Override
@@ -116,17 +117,26 @@ public class VelocityVortexIterativeTeleOp extends OpMode
         currentTransportState = newState;
     }
 
-    private void singleTransportSwitch() {
+    private void transportSwitch() {
         switch (currentTransportState){
             case STATE_STANDBY:
-                if (gamepad2.a) {
-                    robot.setTransportsUp();
-                    newTransportState(transportState.STATE_UP);
-                } else if(gamepad2.b){
-                    robot.setTransportsUp();
-                    newTransportState(transportState.STATE_STAY);
+                if (gamepad2.a || gamepad2.b) {
+                    robot.setShooterSpeed(0.8);
+                    newTransportState(transportState.STATE_SPOOL_UP);
                 }
                 break;
+
+            case STATE_SPOOL_UP:
+                if(!gamepad2.a && !gamepad2.b) {
+                    newTransportState(transportState.STATE_STANDBY);
+                } else if (robot.leftShooterMotor.getPower() >= .8 && robot.rightShooterMotor.getPower() >= .8) {
+                    robot.setTransportsUp();
+                    if(gamepad2.a) {
+                        newTransportState(transportState.STATE_UP);
+                    } else if(gamepad2.b) {
+                        newTransportState(transportState.STATE_STAY);
+                    }
+                }
 
             case STATE_UP:
                 if (robot.transportsAreUp()) {
@@ -137,16 +147,19 @@ public class VelocityVortexIterativeTeleOp extends OpMode
             case STATE_WAIT:
                 if(transportStateTime.time() >= .5) {
                     robot.setTransportsDown();
-
                     newTransportState(transportState.STATE_STANDBY);
                 }
                 break;
 
             case STATE_STAY:
-                if(!gamepad2.b){
+                if(!(robot.leftShooterMotor.getPower() >= .8 && robot.rightShooterMotor.getPower() >= .8)) {
+                    robot.setTransportsUp();
+                    newTransportState(transportState.STATE_SPOOL_UP);
+                } else if(!gamepad2.b){
                     robot.setTransportsDown();
                     newTransportState(transportState.STATE_STANDBY);
                 }
+                break;
         }
     }
 }

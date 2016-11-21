@@ -173,6 +173,7 @@ public class IterativeShootAndParkInCenter extends OpMode {
         stateTime.reset();
         currentState = newState;
     }
+}
 
 }
 
