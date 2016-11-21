@@ -147,16 +147,18 @@ public class VelocityVortexIterativeTeleOp extends OpMode
             case STATE_WAIT:
                 if(transportStateTime.time() >= .5) {
                     robot.setTransportsDown();
+                    robot.setShooterSpeed(0);
                     newTransportState(transportState.STATE_STANDBY);
                 }
                 break;
 
             case STATE_STAY:
                 if(!(robot.leftShooterMotor.getPower() >= .8 && robot.rightShooterMotor.getPower() >= .8)) {
-                    robot.setTransportsUp();
+                    robot.setTransportsDown();
                     newTransportState(transportState.STATE_SPOOL_UP);
                 } else if(!gamepad2.b){
                     robot.setTransportsDown();
+                    robot.setShooterSpeed(0);
                     newTransportState(transportState.STATE_STANDBY);
                 }
                 break;
