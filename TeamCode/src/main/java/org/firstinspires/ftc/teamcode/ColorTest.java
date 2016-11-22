@@ -49,13 +49,13 @@ public class ColorTest extends OpMode
 
     private ElapsedTime runtime = new ElapsedTime();
     public String color = "";
-    public ColorSensor beaconSenser  = null;
+    public ColorSensor beaconSensor  = null;
     DeviceInterfaceModule cdim;
     LightSensor light = null;
 
     @Override
     public void init() {
-        beaconSenser = hardwareMap.colorSensor.get("color");
+        beaconSensor = hardwareMap.colorSensor.get("color");
        cdim = hardwareMap.deviceInterfaceModule.get("cdim");
         cdim.setDigitalChannelMode(7, DigitalChannelController.Mode.OUTPUT);
         cdim.setDigitalChannelState(7, false);
@@ -84,15 +84,15 @@ public class ColorTest extends OpMode
      */
     @Override
     public void loop() {
-        if(beaconSenser.red() > beaconSenser.blue()) {
+        if(beaconSensor.red() > beaconSensor.blue()) {
             color = "red";
         } else {
             color = "blue";
         }
 
         telemetry.addData("color", color);
-        telemetry.addData("red", beaconSenser.red());
-        telemetry.addData("blue", beaconSenser.blue());
+        telemetry.addData("red", beaconSensor.red());
+        telemetry.addData("blue", beaconSensor.blue());
 
         telemetry.addData("raw", light.getRawLightDetected());
         telemetry.addData("light", light.getLightDetected());

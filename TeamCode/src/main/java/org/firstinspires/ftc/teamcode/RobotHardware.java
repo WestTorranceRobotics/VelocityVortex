@@ -7,6 +7,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.I2cAddr;
+import com.qualcomm.robotcore.hardware.I2cDevice;
+import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
+import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -33,9 +37,10 @@ public class RobotHardware {
 
     //Sensors
     public LightSensor lineSensor    = null;
-    public ColorSensor beaconSenser  = null;
+    public I2cDevice beaconSensor  = null;
+    public I2cDeviceSynch beaconSensorReader = null;
     public GyroSensor gyro           = null;
-    public DigitalChannel teamSwitch = null;
+    public DigitalChannel teamSwitch = null;//blue is true, red is false
     //TODO add the switches for team color and other possible preferences
 
     HardwareMap hwMap           =  null;
@@ -76,7 +81,9 @@ public class RobotHardware {
         transportServo2 = hwMap.servo.get("transervo2");
 
         //Sensors
-        beaconSenser = hwMap.colorSensor.get("color");
+        beaconSensor = hwMap.i2cDevice.get("cc");
+        beaconSensorReader = new I2cDeviceSynchImpl(beaconSensor, I2cAddr.create8bit(0x3c), false);
+        beaconSensorReader.engage();
         gyro = hwMap.gyroSensor.get("gyro");
         teamSwitch = hwMap.digitalChannel.get("teamSwitch");
         lineSensor = hwMap.lightSensor.get("lineSensor");

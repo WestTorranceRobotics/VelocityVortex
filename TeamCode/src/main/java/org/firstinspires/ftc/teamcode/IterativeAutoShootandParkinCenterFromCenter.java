@@ -44,7 +44,7 @@ public class IterativeAutoShootandParkinCenterFromCenter extends OpMode
     private ElapsedTime runTime = new ElapsedTime();
     private ElapsedTime stateTime = new ElapsedTime();
     RobotHardware robot = new RobotHardware();
-    IterativeFunctions Fanctions = new IterativeFunctions();
+    IterativeFunctions fanctions = new IterativeFunctions();
 
     private enum state{
         STATE_WARM_UP_SHOOTER_MOTOR,
@@ -83,25 +83,25 @@ public class IterativeAutoShootandParkinCenterFromCenter extends OpMode
             case STATE_WARM_UP_SHOOTER_MOTOR:
                 //Waits for the shooter motors to warm up and turns towards the shooting position.
                 if (robot.leftShooterMotor.getPower() >= .8 && robot.rightShooterMotor.getPower() >= .8) {
-                    Fanctions.setDegrees(-22);
+                    fanctions.setDegrees(-22);
                     newState(state.STATE_TURN_TO_SHOOTING_POSITION);
                 }
                 break;
 
             case STATE_TURN_TO_SHOOTING_POSITION:
                 //Waits for robot to turn towards the shooting position and then moves towards the shooting position.
-                if (Fanctions.doneTurning()) {
-                    Fanctions.endmove();
-                    Fanctions.setPos(50, .6);
+                if (fanctions.doneTurning()) {
+                    fanctions.endmove();
+                    fanctions.setPos(50, .6);
                     newState(state.STATE_MOVE_TO_SHOOTING_POSITION);
                 } else {
-                    Fanctions.turn();
+                    fanctions.turn();
                 }
                 break;
 
             case STATE_MOVE_TO_SHOOTING_POSITION:
                 //Waits for the robot to move into the shooting position and sets transport ramp up to shooot balls.
-                if (!Fanctions.driveMotorsAreBusy()){
+                if (!fanctions.driveMotorsAreBusy()){
                     robot.setTransportsUp();
                     newState(state.STATE_UP);
                 }
@@ -126,39 +126,39 @@ public class IterativeAutoShootandParkinCenterFromCenter extends OpMode
             case STATE_TURN_OFF_SHOOTERS:
                 //Turns off shooter motors and moves forwards.
                 robot.setShooterSpeed(0);
-                Fanctions.setPos(32,.6);
+                fanctions.setPos(32,.6);
                 newState(state.STATE_MOVE_FORWARDS);
                 break;
 
             case STATE_MOVE_FORWARDS:
                 //Waits until the robot is in position and turns -157 degrees to be parallel with the center divide.
-                if (!Fanctions.driveMotorsAreBusy()) {
-                    Fanctions.setDegrees(-157);
+                if (!fanctions.driveMotorsAreBusy()) {
+                    fanctions.setDegrees(-157);
                     newState(state.STATE_TURN_PARALLEL_TO_CENTER_DIVIDE);
                 }
                 break;
 
             case STATE_TURN_PARALLEL_TO_CENTER_DIVIDE:
                 //Waits until the robot is in position before moving backwards to park on the center.
-                if (Fanctions.doneTurning()){
-                    Fanctions.endmove();
-                    Fanctions.setPos(-26,.6);
+                if (fanctions.doneTurning()){
+                    fanctions.endmove();
+                    fanctions.setPos(-26,.6);
                     newState(state.STATE_PARK_ON_CENTER);
                 } else {
-                    Fanctions.turn();
+                    fanctions.turn();
                 }
                 break;
 
             case STATE_PARK_ON_CENTER:
                 //Checks to make sure that the robot is parked.
-                if (!Fanctions.driveMotorsAreBusy()) {
+                if (!fanctions.driveMotorsAreBusy()) {
                     newState(state.STATE_END);
                 }
                 break;
 
             case STATE_END:
                 //Directs the robot to do nothing.
-                Fanctions.endmove();
+                fanctions.endmove();
                 break;
         }
     }

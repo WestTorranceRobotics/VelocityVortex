@@ -44,7 +44,7 @@ public class IterativeAutoShootandParkonRamp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime stateTime = new ElapsedTime();
     RobotHardware robot = new RobotHardware();
-    IterativeFunctions Fanctions = new IterativeFunctions();
+    IterativeFunctions fanctions = new IterativeFunctions();
 
     private enum state {
         STATE_MOVE_TO_SHOOTING_POSITION,//moving to the shooting position and waiting for drive motors not to be busy
@@ -73,7 +73,7 @@ public class IterativeAutoShootandParkonRamp extends OpMode {
     @Override
     public void start() {
         runtime.reset();
-        Fanctions.setPos(48,.6);
+        fanctions.setPos(48,.6);
     }
 
     @Override
@@ -84,13 +84,13 @@ public class IterativeAutoShootandParkonRamp extends OpMode {
                 //waiting for the shooter motors to warm up, and setting position for the drive motors.
                 if (robot.leftShooterMotor.getPower() >= .8 && robot.rightShooterMotor.getPower() >= .8) {
                     newState(state.STATE_MOVE_TO_SHOOTING_POSITION);
-                    Fanctions.setPos(48, .6);
+                    fanctions.setPos(48, .6);
                 }
                 break;
 
             case STATE_MOVE_TO_SHOOTING_POSITION:
                 //moving to position, while waiting for drive motors not to be busy
-                if (!Fanctions.driveMotorsAreBusy()) {
+                if (!fanctions.driveMotorsAreBusy()) {
                     newState(state.STATE_UP);
                     robot.setTransportsUp();
                 }
@@ -105,46 +105,46 @@ public class IterativeAutoShootandParkonRamp extends OpMode {
             case STATE_WAIT:
                 if (stateTime.time() >= .5) {
                     robot.setTransportsDown();
-                    Fanctions.setDegrees(-45);
+                    fanctions.setDegrees(-45);
                     newState(state.STATE_TURN);
                 }
                 break;
 
             case STATE_TURN:
-                if(Fanctions.doneTurning()) {
-                    Fanctions.endmove();
-                    Fanctions.setPos(8,.6);
+                if(fanctions.doneTurning()) {
+                    fanctions.endmove();
+                    fanctions.setPos(8,.6);
                     newState(state.STATE_MOVE);
                 } else {
-                    Fanctions.turn();
+                    fanctions.turn();
                 }
                 break;
 
             case STATE_MOVE:
-                if (!Fanctions.driveMotorsAreBusy()) {
-                    Fanctions.setDegrees(90);
+                if (!fanctions.driveMotorsAreBusy()) {
+                    fanctions.setDegrees(90);
                     newState(state.STATE_TURN_TOWARDS_RAMP);
                 }
                 break;
 
             case STATE_TURN_TOWARDS_RAMP:
-                if(Fanctions.doneTurning()) {
-                    Fanctions.endmove();
-                    Fanctions.setPos(-36, .6);
+                if(fanctions.doneTurning()) {
+                    fanctions.endmove();
+                    fanctions.setPos(-36, .6);
                     newState(state.STATE_PARK);
                 }  else {
-                      Fanctions.turn();
+                      fanctions.turn();
                 }
                 break;
 
             case STATE_PARK:
-                if (!Fanctions.driveMotorsAreBusy()) {
+                if (!fanctions.driveMotorsAreBusy()) {
                     newState(state.STATE_END);
                 }
                 break;
 
             case STATE_END:
-                Fanctions.endmove();
+                fanctions.endmove();
                 break;
         }
     }

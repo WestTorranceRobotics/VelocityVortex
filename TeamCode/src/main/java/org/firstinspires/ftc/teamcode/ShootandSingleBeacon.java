@@ -146,7 +146,7 @@ public class ShootandSingleBeacon extends LinearOpMode {
     }
 
     public boolean isRed() {
-        return robot.beaconSenser.red()>robot.beaconSenser.blue();
+        return robot.beaconSensor.red()>robot.beaconSensor.blue();
     }
 
     public boolean teamColorIsRed() {

@@ -35,6 +35,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -119,6 +120,16 @@ public class IterativeFunctions extends OpMode {
         int multiplier = (degrees/Math.abs(degrees));
         robot.leftMotor.setPower(power * multiplier);
         robot.rightMotor.setPower(-power * multiplier);
+    }
+
+    public boolean sameCola(int colorNumber){
+        if(colorNumber == 10 && !robot.teamSwitch.getState()) {
+            return true;
+        } else if (colorNumber == 3 && robot.teamSwitch.getState()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
