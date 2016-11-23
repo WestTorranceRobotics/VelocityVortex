@@ -33,88 +33,143 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-@Autonomous(name="ShootandParkinCenterFromCenter", group="WTR")  // @Autonomous(...) is the other common choice
-// @Disabled
-public class ShootandParkinCenterFromCenter extends LinearOpMode {
-
-    /*Basically, this is an autonomous of Shoot and Park in Center if the robot were to be placed in alternative
-    location, specifically in the center of the range of available locations in which the robot may be placed.*/
+@Autonomous(name="Iterative Auto", group="WTR")  // @Autonomous(...) is the other common choice
+@Disabled
+public class ShootandParkinCenterFromCenter extends OpMode
+{
+    private ElapsedTime runTime = new ElapsedTime();
+    private ElapsedTime stateTime = new ElapsedTime();
     RobotHardware robot = new RobotHardware();
+    IterativeFunctions fanctions = new IterativeFunctions();
 
-
-    private ElapsedTime runtime = new ElapsedTime();
-
+    private enum state{
+        STATE_WARM_UP_SHOOTER_MOTOR,
+        STATE_TURN_TO_SHOOTING_POSITION,
+        STATE_MOVE_TO_SHOOTING_POSITION,
+        STATE_UP,
+        STATE_SHOOT,
+        STATE_WAIT,
+        STATE_TURN_OFF_SHOOTERS,
+        STATE_MOVE_FORWARDS,
+        STATE_TURN_PARALLEL_TO_CENTER_DIVIDE,
+        STATE_PARK_ON_CENTER,
+        STATE_END,
+    }
+    private state currentState;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void init() {
         robot.initRobotHardware(hardwareMap);
+    }
 
-        waitForStart();
-        runtime.reset();
+    @Override
+    public void init_loop() {
+        robot.anushalizeRobotHardware();
+    }
 
-        robot.setShooterSpeed(.8);
-        turn(-22);
-        runtoposition(50, .6);
+    @Override
+    public void start() {
+        runTime.reset();
+    }
 
-        while (robot.leftShooterMotor.getPower() < .8 && robot.rightShooterMotor.getPower() < .8) {
+    @Override
+    public void loop() {
+        switch (currentState) {
 
+            case STATE_WARM_UP_SHOOTER_MOTOR:
+                //Waits for the shooter motors to warm up and turns towards the shooting position.
+                if (robot.leftShooterMotor.getPower() >= .8 && robot.rightShooterMotor.getPower() >= .8) {
+                    fanctions.setDegrees(-22);
+                    newState(state.STATE_TURN_TO_SHOOTING_POSITION);
+                }
+                break;
+
+            case STATE_TURN_TO_SHOOTING_POSITION:
+                //Waits for robot to turn towards the shooting position and then moves towards the shooting position.
+                if (fanctions.doneTurning()) {
+                    fanctions.endmove();
+                    fanctions.setPos(50, .6);
+                    newState(state.STATE_MOVE_TO_SHOOTING_POSITION);
+                } else {
+                    fanctions.turn();
+                }
+                break;
+
+            case STATE_MOVE_TO_SHOOTING_POSITION:
+                //Waits for the robot to move into the shooting position and sets transport ramp up to shooot balls.
+                if (!fanctions.driveMotorsAreBusy()){
+                    robot.setTransportsUp();
+                    newState(state.STATE_UP);
+                }
+                break;
+
+            case STATE_UP:
+                //Waits for transport ramp to be set up and waits for balls to pass by.
+                if (robot.transportsAreUp()) {
+                newState(state.STATE_WAIT);
+                }
+                break;
+
+
+            case STATE_WAIT:
+                //Waits for .5 seconds before setting the transport ramp back down.
+                if (stateTime.time() >= .5) {
+                    robot.setTransportsDown();
+                    newState(state.STATE_TURN_OFF_SHOOTERS);
+                }
+                break;
+
+            case STATE_TURN_OFF_SHOOTERS:
+                //Turns off shooter motors and moves forwards.
+                robot.setShooterSpeed(0);
+                fanctions.setPos(32,.6);
+                newState(state.STATE_MOVE_FORWARDS);
+                break;
+
+            case STATE_MOVE_FORWARDS:
+                //Waits until the robot is in position and turns -157 degrees to be parallel with the center divide.
+                if (!fanctions.driveMotorsAreBusy()) {
+                    fanctions.setDegrees(-157);
+                    newState(state.STATE_TURN_PARALLEL_TO_CENTER_DIVIDE);
+                }
+                break;
+
+            case STATE_TURN_PARALLEL_TO_CENTER_DIVIDE:
+                //Waits until the robot is in position before moving backwards to park on the center.
+                if (fanctions.doneTurning()){
+                    fanctions.endmove();
+                    fanctions.setPos(-26,.6);
+                    newState(state.STATE_PARK_ON_CENTER);
+                } else {
+                    fanctions.turn();
+                }
+                break;
+
+            case STATE_PARK_ON_CENTER:
+                //Checks to make sure that the robot is parked.
+                if (!fanctions.driveMotorsAreBusy()) {
+                    newState(state.STATE_END);
+                }
+                break;
+
+            case STATE_END:
+                //Directs the robot to do nothing.
+                fanctions.endmove();
+                break;
         }
-
-        wait(1);
-
-        robot.setShooterSpeed(0);
-
-        runtoposition(32, .6);
-
-        turn(-157);
-
-        runtoposition(-26, .6);
-
-    }
-    public void setPos(double inches, double goes) {
-
-        robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        int ticks = (int)(inches*(1/4*3.14159265359)*(16/24)*(1120));
-        int currentleft = robot.leftMotor.getCurrentPosition();
-        int currentright = robot.rightMotor.getCurrentPosition();
-
-        robot.leftMotor.setTargetPosition(ticks+ currentleft);
-        robot.rightMotor.setTargetPosition(ticks+ currentright);
-        robot.leftMotor.setPower(goes);
-        robot.rightMotor.setPower(goes);
-    }
-    public void endmove(){
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
-    }
-    public void runtoposition(double inches, double speed) {
-        setPos(inches, speed);
-        while (robot.leftMotor.isBusy() && robot.rightMotor.isBusy() && opModeIsActive()) {
-
-        }
-        endmove();
     }
 
-    public void turn(int degrees) {
-        int intheading = robot.gyro.getHeading();
+    @Override
+    public void stop() {
+    }
 
-        int multiplier = (degrees/Math.abs(degrees));
-
-        robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        while (Math.abs(robot.gyro.getHeading()-intheading) <= Math.abs(degrees)) {
-
-            robot.leftMotor.setPower(multiplier * .6);
-            robot.rightMotor.setPower(-.6 * multiplier);
-
-        }
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
+    private void newState(state newState) {
+        // Reset the state time, and then change to next state.
+        stateTime.reset();
+        currentState = newState;
     }
 }

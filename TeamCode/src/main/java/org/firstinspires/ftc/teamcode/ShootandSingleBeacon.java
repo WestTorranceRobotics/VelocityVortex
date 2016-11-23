@@ -33,130 +33,192 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-@Autonomous(name="ShootandSingleBeacon", group="WTR")  // @Autonomous(...) is the other common choice
-// @Disabled
-public class ShootandSingleBeacon extends LinearOpMode {
-
-    RobotHardware robot = new RobotHardware();
+@Autonomous(name="Iterative Auto", group="WTR")  // @Autonomous(...) is the other common choice
+@Disabled
+public class ShootAndSingleBeacon extends OpMode
+{
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime stateTime = new ElapsedTime();
+    RobotHardware robot = new RobotHardware();
+    IterativeFunctions fanctions = new IterativeFunctions();
+
+    byte[] colorCcache;
+
+    private enum state {
+        STATE_SPOOL_UP_SHOOTERS,
+        //Rev these shooters.
+        STATE_DRIVE_TO_VORTEX,
+        //Driving to vortex.
+        STATE_WAIT_FOR_SHOOTERS,
+        //Waiting for shooters to get power.
+        STATE_UP,
+        //Moving transport ramp up to shoot ball.
+        STATE_WAIT,
+        //Waiting half a second to move transport ramp back down.
+        STATE_SHUT_OFF_SHOOTERS,
+        //Turning off shooter motors.
+        STATE_TURN_LEFT,
+        //Turn left 45 degrees.
+        STATE_MOVE_FORTYTWO_INCHES,
+        //Move forty two inches forward.
+        STATE_TURN_RIGHT,
+        //Turn right 45 degrees.
+        STATE_SENSE_WHITE_LINE,
+        //TODO make line follower
+        STATE_MOVE_LEFT_MORE,
+        //Move left 90 degrees.
+        STATE_SENSE_COLOR,
+        //Determine the color of the beacon.
+        STATE_WAIT_FOR_RAM,
+        //wait a second to have the ram turn.
+        STATE_PREPARE_TO_GIT_RAMMED_M8_U_WOT_RAMMING_SPEED,
+        //Git rammed. :^)
+        STATE_STAND_BACK,
+        //Move backwards
+    }
+
+    state currentState;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void init() {
         robot.initRobotHardware(hardwareMap);
+    }
 
-        waitForStart();
+    @Override
+    public void init_loop() {
+        robot.anushalizeRobotHardware();
+    }
+
+    @Override
+    public void start() {
         runtime.reset();
+    }
+
+    @Override
+    public void loop() {
+        colorCcache = robot.beaconSensorReader.read(0x04, 1);
+
+        switch (currentState) {
+
+            case STATE_SPOOL_UP_SHOOTERS:
+                robot.setShooterSpeed(.8);
+                newState(state.STATE_DRIVE_TO_VORTEX);
+                break;
+            //Rev these shooters.
+
+            case STATE_DRIVE_TO_VORTEX:
+                fanctions.setPos(48, .6);
+                newState(state.STATE_WAIT_FOR_SHOOTERS);
+                break;
+            //Driving to vortex.
+
+            case STATE_WAIT_FOR_SHOOTERS:
+                if (robot.leftShooterMotor.getPower() >= .8 && robot.rightShooterMotor.getPower() >= .8) {
+                    robot.setTransportsUp();
+                    newState(state.STATE_UP);
+                }
+                break;
+            //Waiting for shooters to get power.
+
+            case STATE_UP:
+                if (robot.transportsAreUp()) {
+                    newState(state.STATE_WAIT);
+                }
+                break;
+            //Moving transport ramp up to shoot ball.
+
+            case STATE_WAIT:
+                if (stateTime.time() >= .5) {
+                    robot.setTransportsDown();
+                    newState(state.STATE_SHUT_OFF_SHOOTERS);
+                }
+                break;
+            //Waiting half a second to move transport ramp back down.
+
+            case STATE_SHUT_OFF_SHOOTERS:
+                robot.setShooterSpeed(0);
+                fanctions.setDegrees(-45);
+                newState(state.STATE_TURN_LEFT);
+                break;
+            //Turning off shooter motors.
+
+            case STATE_TURN_LEFT:
+                if(fanctions.doneTurning()) {
+                    fanctions.endmove();
+                    newState(state.STATE_MOVE_FORTYTWO_INCHES);
+                } else {
+                    fanctions.turn();
+                }
+                break;
+                //Move 45 degrees left.
+
+            case STATE_MOVE_FORTYTWO_INCHES:
+                fanctions.setPos(42, .6);
+                fanctions.setDegrees(45);
+                newState(state.STATE_TURN_RIGHT);
+                break;
+
+            case STATE_TURN_RIGHT:
+                if (fanctions.doneTurning()) {
+                    fanctions.endmove();
+                    newState(state.STATE_SENSE_WHITE_LINE);
+                } else {
+                    fanctions.turn();
+                }
+                break;
+
+            case STATE_SENSE_WHITE_LINE:
+                fanctions.setDegrees(-90);
+                newState(state.STATE_MOVE_LEFT_MORE);
+                break;
+
+            case STATE_MOVE_LEFT_MORE:
+                if (fanctions.doneTurning()) {
+                    fanctions.endmove();
+                    newState(state.STATE_SENSE_COLOR);
+                } else {
+                    fanctions.turn();
+                }
+                break;
+
+            case STATE_SENSE_COLOR:
+                if(fanctions.sameCola(colorCcache[0] & 0xFF)) {
+                    robot.setRamServoRight();
+                } else {
+                    robot.setRamServoLeft();
+                }
+                newState(state.STATE_WAIT_FOR_RAM);
+                break;
+
+            case STATE_WAIT_FOR_RAM:
+                if(stateTime.time() >= 1) {
+                    newState(state.STATE_PREPARE_TO_GIT_RAMMED_M8_U_WOT_RAMMING_SPEED);
+                    fanctions.setPos(6,1);
+                }
+                break;
+
+            case STATE_PREPARE_TO_GIT_RAMMED_M8_U_WOT_RAMMING_SPEED:
+                if(!fanctions.driveMotorsAreBusy()){
+                    fanctions.endmove();
+                    newState(state.STATE_STAND_BACK);
+                }
 
 
-        robot.setShooterSpeed(.8);
-        runtoposition(48, .6);
-
-        while (robot.leftShooterMotor.getPower() < .8 && robot.rightShooterMotor.getPower() < .8) {
 
         }
-
-        transportBall();
-
-        wait(1);
-
-        robot.setShooterSpeed(0);
-
-        turn(-45);
-
-        runtoposition(42, .6);
-
-        turn(45);
-
-        while(notWhite()) {
-            robot.leftMotor.setPower(.4);
-            robot.rightMotor.setPower(.4);
-        }
-
-        turn(-90);
-
-
-        //TODO make function to go forward to press button.
     }
 
-    public void setPos(double inches, double goes) {
-
-        robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        int ticks = (int)(inches*(1/4*3.14159265359)*(16/24)*(1120));
-        int currentleft = robot.leftMotor.getCurrentPosition();
-        int currentright = robot.rightMotor.getCurrentPosition();
-
-        robot.leftMotor.setTargetPosition(ticks+ currentleft);
-        robot.rightMotor.setTargetPosition(ticks+ currentright);
-        robot.leftMotor.setPower(goes);
-        robot.rightMotor.setPower(goes);
+    @Override
+    public void stop() {
+    }
+    private void newState(state newState) {
+        // Reset the state time, and then change to next state.
+        stateTime.reset();
+        currentState = newState;
     }
 
-    public void endmove(){
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
-    }
-
-    public void runtoposition(double inches, double speed) {
-        setPos(inches, speed);
-        while (robot.leftMotor.isBusy() && robot.rightMotor.isBusy() && opModeIsActive()) {
-
-        }
-        endmove();
-    }
-
-    public void turn(int degrees) {
-        int intheading = robot.gyro.getHeading();
-
-        int multiplier = (degrees/Math.abs(degrees));
-
-        robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        while (Math.abs(robot.gyro.getHeading()-intheading) <= Math.abs(degrees)) {
-
-            robot.leftMotor.setPower(multiplier * .6);
-            robot.rightMotor.setPower(-.6 * multiplier);
-
-        }
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
-    }
-
-    public void transportBall(){
-        //make this function later
-    }
-
-    public boolean notWhite() {
-        //make this function
-        return robot.lineSensor.getRawLightDetected() < 100;
-        //less is floor, more is the line
-
-    }
-
-    public void wait(double time){
-        double initialTime = runtime.time();
-        while (runtime.time()- initialTime <time){
-
-        }
-    }
-
-    public boolean isRed() {
-        return robot.beaconSensor.red()>robot.beaconSensor.blue();
-    }
-
-    public boolean teamColorIsRed() {
-        return robot.teamSwitch.getState();
-    }
-
-    //TODO MAKE THIS WHOLE BEACON THING WORK
-
-    public boolean sameColor() {
-        return isRed() == teamColorIsRed();
-    }
-    //Todo: make a function to move the robot and push the button
-    }
+}

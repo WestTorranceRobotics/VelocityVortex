@@ -33,70 +33,44 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="ShootandParkinCenter", group="WTR")  // @Autonomous(...) is the other common choice
-// @Disabled
-public class ShootandParkinCenter extends LinearOpMode {
+@Autonomous(name="AutoTemplate", group="WTR")
+@Disabled
+public class LinearAutoTemplate extends LinearOpMode {
 
     RobotHardware robot = new RobotHardware();
     private ElapsedTime runtime = new ElapsedTime();
 
-
     @Override
     public void runOpMode() throws InterruptedException {
         robot.initRobotHardware(hardwareMap);
-
         waitForStart();
         runtime.reset();
-
-        robot.setShooterSpeed(.8);
-
-        //DRIVE THO THE CENTER VORTEX
-        runtoposition(48, .6);
-
-        while (robot.leftShooterMotor.getPower() < .8 && robot.rightShooterMotor.getPower() < .8) {
-
-        }
-
-        transportBall();
-
-        wait(1);
-
-        robot.setShooterSpeed(0);
-
-        turn(90);
-
-        runtoposition(24, .6);
-
-        turn(45);
-
-        runtoposition(-24, .6);
-
     }
 
     public void setPos(double inches, double goes) {
 
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        int ticks = (int) (inches * (1 / 4 * 3.14159265359) * (16 / 24) * (1120));
+        //TODO change this inches to tick formula to be representative of actual robot
+        int ticks = (int)(inches*(1/4*3.14159265359)*(16/24)*(1120));
         int currentleft = robot.leftMotor.getCurrentPosition();
         int currentright = robot.rightMotor.getCurrentPosition();
 
-        robot.leftMotor.setTargetPosition(ticks + currentleft);
-        robot.rightMotor.setTargetPosition(ticks + currentright);
+        robot.leftMotor.setTargetPosition(ticks+ currentleft);
+        robot.rightMotor.setTargetPosition(ticks+ currentright);
         robot.leftMotor.setPower(goes);
         robot.rightMotor.setPower(goes);
     }
-
-    public void endmove() {
+    public void endmove(){
         robot.leftMotor.setPower(0);
         robot.rightMotor.setPower(0);
     }
-
     public void runtoposition(double inches, double speed) {
         setPos(inches, speed);
         while (robot.leftMotor.isBusy() && robot.rightMotor.isBusy() && opModeIsActive()) {
@@ -108,11 +82,11 @@ public class ShootandParkinCenter extends LinearOpMode {
     public void turn(int degrees) {
         int intheading = robot.gyro.getHeading();
 
-        int multiplier = (degrees / Math.abs(degrees));
+        int multiplier = (degrees/Math.abs(degrees));
 
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        while (Math.abs(robot.gyro.getHeading() - intheading) <= Math.abs(degrees)) {
+        while (Math.abs(robot.gyro.getHeading()-intheading) <= Math.abs(degrees)) {
 
             robot.leftMotor.setPower(multiplier * .6);
             robot.rightMotor.setPower(-.6 * multiplier);
@@ -120,17 +94,5 @@ public class ShootandParkinCenter extends LinearOpMode {
         }
         robot.leftMotor.setPower(0);
         robot.rightMotor.setPower(0);
-    }
-
-    public void transportBall() {
-        //TODO make this function later
-    }
-
-    public void wait(double time) {
-        double initialTime = runtime.time();
-        while (runtime.time() - initialTime < time) {
-
-        }
-
     }
 }
