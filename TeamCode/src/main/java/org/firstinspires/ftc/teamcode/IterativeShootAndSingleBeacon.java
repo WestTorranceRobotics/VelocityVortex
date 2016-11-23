@@ -35,10 +35,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Iterative Auto", group="WTR")  // @Autonomous(...) is the other common choice
-@Disabled
+@Autonomous(name="ShootAndSingleBeacon", group="WTR")  // @Autonomous(...) is the other common choice
+//@Disabled
 public class IterativeShootAndSingleBeacon extends OpMode
 {
     private ElapsedTime runtime = new ElapsedTime();
@@ -165,6 +166,10 @@ public class IterativeShootAndSingleBeacon extends OpMode
             case STATE_TURN_RIGHT:
                 if (fanctions.doneTurning()) {
                     fanctions.endmove();
+                    robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.leftMotor.setPower(.6);
+                    robot.rightMotor.setPower(.6);
                     newState(state.STATE_SENSE_WHITE_LINE);
                 } else {
                     fanctions.turn();
@@ -172,8 +177,11 @@ public class IterativeShootAndSingleBeacon extends OpMode
                 break;
 
             case STATE_SENSE_WHITE_LINE:
-                fanctions.setDegrees(-90);
-                newState(state.STATE_MOVE_LEFT_MORE);
+                if(robot.lineSensor.getLightDetected() > 0.4) {
+                    fanctions.setDegrees(-90);
+                    newState(state.STATE_MOVE_LEFT_MORE);
+                    fanctions.endmove();
+                }
                 break;
 
             case STATE_MOVE_LEFT_MORE:
