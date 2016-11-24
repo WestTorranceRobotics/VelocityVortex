@@ -132,4 +132,6 @@ public class IterativeFunctions extends OpMode {
         }
     }
 
+    public int colorNumber;
+
 }

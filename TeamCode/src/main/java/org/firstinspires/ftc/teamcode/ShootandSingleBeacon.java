@@ -39,7 +39,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Iterative Auto", group="WTR")  // @Autonomous(...) is the other common choice
 @Disabled
-public class ShootAndSingleBeacon extends OpMode
+public class ShootandSingleBeacon extends OpMode
 {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime stateTime = new ElapsedTime();
@@ -172,8 +172,10 @@ public class ShootAndSingleBeacon extends OpMode
                 break;
 
             case STATE_SENSE_WHITE_LINE:
-                fanctions.setDegrees(-90);
-                newState(state.STATE_MOVE_LEFT_MORE);
+                if(robot.lineSensor.getLightDetected() > 0.4) {
+                    fanctions.setDegrees(-90);
+                    newState(state.STATE_MOVE_LEFT_MORE);
+                }
                 break;
 
             case STATE_MOVE_LEFT_MORE:
