@@ -42,7 +42,7 @@ public class RobotHardware {
     public I2cDeviceSynch beaconSensorReader = null;
     public GyroSensor gyro           = null;
     public DigitalChannel teamSwitch = null;//blue is true, red is false
-    //TODO add the switches for team color and other possible preferences
+
 
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
