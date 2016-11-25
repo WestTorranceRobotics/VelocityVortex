@@ -78,6 +78,9 @@ public class ShootandParkinCenterFromCenter extends OpMode
 
     @Override
     public void loop() {
+
+        telemetry.addData("state", currentState);
+
         switch (currentState) {
 
             case STATE_WARM_UP_SHOOTER_MOTOR:

@@ -51,6 +51,9 @@ public class MrStealYoBeacons extends OpMode
     private enum state{
 
     }
+
+    state currentState;
+    
     @Override
     public void init() {
         robot.initRobotHardware(hardwareMap);
@@ -68,6 +71,8 @@ public class MrStealYoBeacons extends OpMode
 
     @Override
     public void loop() {
+
+        telemetry.addData("state", currentState);
 
     }
 

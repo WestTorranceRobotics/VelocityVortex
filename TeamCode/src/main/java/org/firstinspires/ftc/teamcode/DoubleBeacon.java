@@ -101,6 +101,8 @@ public class DoubleBeacon extends OpMode
     public void loop() {
         colorCcache = robot.beaconSensorReader.read(0x04, 1);
 
+        telemetry.addData("state", currentstate);
+
         switch (currentstate) {
 
             case STATE_MOVE_A_BIT:
@@ -231,4 +233,4 @@ public class DoubleBeacon extends OpMode
 
 }
 
-//TODO TRY TO MAKE IT SO THAT THE ROBOT WILL TURN DIRECTLY ON THE WHITE LINE WHEN IT TURNS.
+//TODO TRY TO MAKE IT SO THAT THE ROBOT WILL TURN DIRECTLY ON THE WHITE LINE WHEN IT TURNS. TEST.

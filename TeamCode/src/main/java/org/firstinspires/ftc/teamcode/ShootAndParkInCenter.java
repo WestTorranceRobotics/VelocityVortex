@@ -57,6 +57,9 @@ public class ShootAndParkInCenter extends OpMode {
 
     @Override
     public void loop() {
+
+        telemetry.addData("state", currentState);
+
         switch (currentState) {
 
             case STATE_SPOOL_UP_SHOOTERS:
