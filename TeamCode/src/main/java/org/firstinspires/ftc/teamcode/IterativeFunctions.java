@@ -97,7 +97,7 @@ public class IterativeFunctions extends OpMode {
 
     public void setDegrees(int degrees){
         //
-        this.degrees = degrees;
+        this.degrees = degrees * colorNumber();
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
@@ -132,6 +132,14 @@ public class IterativeFunctions extends OpMode {
         }
     }
 
-    public int colorNumber;
+    public int colorNumber() {
+        if(robot.teamSwitch.getState()){
+            return -1;
+        } else {
+            return 1;
+        }
+    }
+
+
 
 }
