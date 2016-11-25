@@ -68,7 +68,7 @@ public class ShootandSingleBeacon extends OpMode
         STATE_TURN_RIGHT,
         //Turn right 45 degrees.
         STATE_SENSE_WHITE_LINE,
-        //TODO make line follower
+        //sense the white line and move on it.
         STATE_MOVE_LEFT_MORE,
         //Move left 90 degrees.
         STATE_SENSE_COLOR,
@@ -101,7 +101,7 @@ public class ShootandSingleBeacon extends OpMode
     @Override
     public void loop() {
         colorCcache = robot.beaconSensorReader.read(0x04, 1);
-
+        telemetry.addData("state",currentState);
         switch (currentState) {
 
             case STATE_SPOOL_UP_SHOOTERS:

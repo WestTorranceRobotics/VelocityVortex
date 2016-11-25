@@ -118,6 +118,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode
     }
 
     private void transportSwitch() {
+        telemetry.addData("state",currentTransportState);
         switch (currentTransportState){
             case STATE_STANDBY:
                 if (gamepad2.a || gamepad2.b) {
