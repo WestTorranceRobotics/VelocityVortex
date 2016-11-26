@@ -50,10 +50,11 @@ public class MrStealYoBeacons extends OpMode
 
     private enum state{
 
+
     }
 
     state currentState;
-    
+
     @Override
     public void init() {
         robot.initRobotHardware(hardwareMap);
