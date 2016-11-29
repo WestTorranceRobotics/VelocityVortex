@@ -43,7 +43,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Disabled
 public class IterativeFunctions extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
-    RobotHardware robot = new RobotHardware();
+    RobotHardware robot;
+
+    public IterativeFunctions(RobotHardware hardware){
+        robot = hardware;
+    }
 
     @Override
     public void init() {

@@ -44,7 +44,7 @@ public class DoubleBeacon extends OpMode
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime stateTime = new ElapsedTime();
     RobotHardware robot = new RobotHardware();
-    IterativeFunctions fanctions = new IterativeFunctions();
+    IterativeFunctions fanctions = new IterativeFunctions(robot);
 
     byte[] colorCcache;
 

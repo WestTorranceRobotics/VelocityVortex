@@ -42,7 +42,7 @@ public class ShootandParkonRamp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime stateTime = new ElapsedTime();
     RobotHardware robot = new RobotHardware();
-    IterativeFunctions fanctions = new IterativeFunctions();
+    IterativeFunctions fanctions = new IterativeFunctions(robot);
 
     private enum state {
         STATE_MOVE_TO_SHOOTING_POSITION,//moving to the shooting position and waiting for drive motors not to be busy
@@ -71,12 +71,15 @@ public class ShootandParkonRamp extends OpMode {
     @Override
     public void start() {
         runtime.reset();
-        fanctions.setPos(48,.6);
+        newState(state.STATE_WARM_UP_SHOOTER_MOTOR);
     }
 
     @Override
     public void loop() {
-        telemetry.addData("state",currentState);
+        telemetry.addData("state", currentState);
+        telemetry.addData("encoders", robot.leftMotor.getCurrentPosition() + ", " + robot.rightMotor.getCurrentPosition());
+        telemetry.addData("targets", robot.leftMotor.getTargetPosition() + ", " + robot.rightMotor.getTargetPosition());
+        telemetry.addData("TO TURN", fanctions.degrees);
         switch (currentState) {
 
             case STATE_WARM_UP_SHOOTER_MOTOR:

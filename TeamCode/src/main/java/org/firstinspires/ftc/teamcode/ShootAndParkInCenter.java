@@ -12,7 +12,7 @@ public class ShootAndParkInCenter extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime stateTime = new ElapsedTime();
     RobotHardware robot = new RobotHardware();
-    IterativeFunctions fanctions = new IterativeFunctions();
+    IterativeFunctions fanctions = new IterativeFunctions(robot);
 
     private enum state {
         STATE_SPOOL_UP_SHOOTERS,

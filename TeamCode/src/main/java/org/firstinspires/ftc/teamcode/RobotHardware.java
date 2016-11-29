@@ -55,7 +55,7 @@ public class RobotHardware {
     public double transport1Down = 0;
     public double transport2Up = 1;
     public double transport2Down = 0;
-    public double inchToTickConversion = (1/(3*Math.PI))*(1120);
+    public double inchToTickConversion = 118.8356;
 
     /* Constructor */
     public RobotHardware(){
@@ -109,8 +109,8 @@ public class RobotHardware {
         capBallMotor.setPower(0);
 
         //Set motors to their appropriate modes
-        leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -121,6 +121,8 @@ public class RobotHardware {
         ramServo.setPosition(ramServoMiddle);
         transportServo1.setPosition(transport1Down);
         transportServo2.setPosition(transport2Down);
+        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void tankDrive(double left, double right) {
@@ -136,6 +138,11 @@ public class RobotHardware {
         } else {
             rightMotor.setPower(right);
         }
+    }
+
+    public void changeDriveTrainMode(DcMotor.RunMode mode){
+        leftMotor.setMode(mode);
+        rightMotor.setMode(mode);
     }
 
     public void setShooterSpeed(double speed) {
