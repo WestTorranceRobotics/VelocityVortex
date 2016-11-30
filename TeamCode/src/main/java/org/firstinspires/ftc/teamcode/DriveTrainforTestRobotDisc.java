@@ -32,12 +32,10 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Hardware;
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -52,45 +50,72 @@ import com.qualcomm.robotcore.util.Hardware;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Linear TeleDOp", group="WTR")
-// @Disabled
+@TeleOp(name="Test Drive C", group="WTR")  // @Autonomous(...) is the other common choice
+//@Disabled
+public class DriveTrainforTestRobotDisc extends LinearOpMode {
 
-public class VelocityVortexTeleOp extends LinearOpMode {
-
+    /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-    RobotHardware robot = new RobotHardware();
+    public DcMotor leftMotor = null;
+    public DcMotor rightMotor = null;
+
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
-        robot.initRobotHardware(hardwareMap);
+
+        /* eg: Initialize the hardware variables. Note that the strings used here as parameters
+         * to 'get' must correspond to the names assigned during the robot configuration
+         * step (using the FTC Robot Controller app on the phone).
+         */
+        leftMotor = hardwareMap.dcMotor.get("leftmotor");
+        rightMotor = hardwareMap.dcMotor.get("rightmotor");
+        // leftMotor  =hardwareMap.dcMotor.get("left_drive");
+        // rightMotor = hardwareMap.dcMotor.get("right_drive");
+        leftMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        // eg: Set the drive motor directions:
+        // "Reverse" the motor that runs backwards when connected directly to the battery
+        // leftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        // rightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
 
         // Wait for the game to start (driver presses PLAY)
+
+        boolean stop = false;
         waitForStart();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            //sets the drive train motors based on the joysticks
-            robot.tankDrive(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
-
-            //sets the intake motor to 100% TO 0% based on button pressed
-            if(gamepad1.right_bumper){
-                robot.intakeMotor.setPower(1);
-            }else{
-                robot.intakeMotor.setPower(0);
+            if(runtime.time() >= 60 && runtime.time() <= 80) {
+                telemetry.addData("CONNECTION STATUS", "LOST CONNECTION!");
+                stop = true;
+            } else {
+                telemetry.addData("CONNECTION STATUS", "CONNECTED!");
+                stop = false;
             }
 
-            if(gamepad2.right_bumper){
-                robot.leftShooterMotor.setPower(1);
-                robot.rightShooterMotor.setPower(1);
+
+            if(Math.abs(-gamepad1.left_stick_y)<.15 || runtime.time() > 120 || stop){
+                 leftMotor.setPower(0);
+
             }else {
-                robot.leftShooterMotor.setPower(0);
-                robot.rightShooterMotor.setPower(0);
+                 leftMotor.setPower(-gamepad1.left_stick_y);
             }
 
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+            if(Math.abs(-gamepad1.right_stick_y)<.15 || runtime.time() > 120 || stop){
+                rightMotor.setPower(0);
+            }else {
+                rightMotor.setPower(-gamepad1.right_stick_y);
+            }
+            // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
+            // leftMotor.setPower(-gamepad1.left_stick_y);
+            // rightMotor.setPower(-gamepad1.right_stick_y);
+
+
+
+            idle();
         }
     }
 }

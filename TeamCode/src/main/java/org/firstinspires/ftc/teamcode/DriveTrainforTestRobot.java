@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Test Drive", group="WTR")  // @Autonomous(...) is the other common choice
+@TeleOp(name="Test Drive A", group="WTR")  // @Autonomous(...) is the other common choice
 //@Disabled
 public class DriveTrainforTestRobot extends LinearOpMode {
 
@@ -90,13 +90,14 @@ public class DriveTrainforTestRobot extends LinearOpMode {
         while (opModeIsActive()) {
 
 
-            if(Math.abs(-gamepad1.left_stick_y)<.15){
+            if(Math.abs(-gamepad1.left_stick_y)<.15 || runtime.time() > 120){
                  leftMotor.setPower(0);
+
             }else {
                  leftMotor.setPower(-gamepad1.left_stick_y);
             }
 
-            if(Math.abs(-gamepad1.right_stick_y)<.15){
+            if(Math.abs(-gamepad1.right_stick_y)<.15 || runtime.time() > 120){
                 rightMotor.setPower(0);
             }else {
                 rightMotor.setPower(-gamepad1.right_stick_y);
@@ -104,6 +105,8 @@ public class DriveTrainforTestRobot extends LinearOpMode {
             // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
             // leftMotor.setPower(-gamepad1.left_stick_y);
             // rightMotor.setPower(-gamepad1.right_stick_y);
+
+
 
             idle();
         }
