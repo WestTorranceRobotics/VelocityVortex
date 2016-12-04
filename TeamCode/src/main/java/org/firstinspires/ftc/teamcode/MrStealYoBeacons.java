@@ -38,7 +38,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="MrStealYoBeacons", group="WTR")  // @Autonomous(...) is the other common choice
-//@Disabled
+@Disabled
 public class MrStealYoBeacons extends OpMode
 {
     private ElapsedTime runtime = new ElapsedTime();

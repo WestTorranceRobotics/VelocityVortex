@@ -106,7 +106,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode
      */
     @Override
     public void init_loop() {
-        //transportServo1.setPosition(0);
+      //transportServo1.setPosition(0);
         SetServo(.5);
     }
 
@@ -139,7 +139,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode
             telemetry.addData("1", transportServo1.getPortNumber());
             //telemetry.addData("2", transportServo2.getPortNumber());
 
-            if(!transportsAreUp() && gamepad1.a){
+            if(!transportsAreUp() && gamepad2.a){
                 SetServo(currentPos - .001);
             } if(!gamepad2.a) {
             SetServo(0.5);
@@ -157,7 +157,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode
                 rightMotor.setPower(-gamepad1.right_stick_y * .5);
             }
 
-        if(gamepad2.a) {
+        if(gamepad1.right_bumper) {
             intakeMotor.setPower(.6);
         } else if(gamepad1.left_bumper) {
             intakeMotor.setPower(-.6);
@@ -166,8 +166,8 @@ public class VelocityVortexIterativeTeleOp extends OpMode
         }
 
         if(gamepad2.right_bumper) {
-            rightShooterMotor.setPower(.8);
-            leftShooterMotor.setPower(.8);
+            rightShooterMotor.setPower(.7);
+            leftShooterMotor.setPower(.7);
         } else {
             rightShooterMotor.setPower(0);
             leftShooterMotor.setPower(0);

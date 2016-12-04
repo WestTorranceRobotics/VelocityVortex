@@ -53,7 +53,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 */
 
 @TeleOp(name="Test Drive A", group="WTR")  // @Autonomous(...) is the other common choice
-//@Disabled
+@Disabled
 public class DriveTrainforTestRobot extends LinearOpMode {
 
     /* Declare OpMode members. */
