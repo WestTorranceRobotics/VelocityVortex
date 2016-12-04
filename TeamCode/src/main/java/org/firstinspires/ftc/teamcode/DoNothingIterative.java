@@ -76,7 +76,7 @@ public class DoNothingIterative extends OpMode
                 robot.intakeMotor.setPower(0);
                 robot.leftShooterMotor.setPower(0);
                 robot.rightShooterMotor.setPower(0);
-                robot.capBallMotor.setPower(0);
+
         }
 
     }

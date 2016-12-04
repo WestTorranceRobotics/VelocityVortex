@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorAdafruitRGB;
@@ -29,8 +30,6 @@ public class RobotHardware {
     public DcMotor  intakeMotor       = null;
     public DcMotor  leftShooterMotor  = null;
     public DcMotor  rightShooterMotor = null;
-    public DcMotor  capBallMotor      = null;
-
     //Servos
     public Servo ramServo = null;
     public Servo transportServo1 = null;
@@ -47,6 +46,8 @@ public class RobotHardware {
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
 
+    public ServoController servoController = null;
+
     //Constants for servos
     public double ramServoRight = 1;
     public double ramServoLeft = -1;
@@ -55,6 +56,10 @@ public class RobotHardware {
     public double transport1Down = 0;
     public double transport2Up = 1;
     public double transport2Down = 0;
+    public double transport1GoSlowly = transportServo1.getPosition() + .2;
+    public double transport2GoSlowly = transportServo2.getPosition() + -.2;
+    public double transport1GoSlowlyTarget = .5;
+    public double transport2GoSlowlyTarget = -.5;
     public double inchToTickConversion = 118.8356;
 
     /* Constructor */
@@ -73,32 +78,36 @@ public class RobotHardware {
         intakeMotor = hwMap.dcMotor.get("inmotor");
         leftShooterMotor = hwMap.dcMotor.get("LShootmotor");
         rightShooterMotor = hwMap.dcMotor.get("RShootmotor");
-        capBallMotor = hwMap.dcMotor.get("capmotor");
+
 
         //Servos
         ramServo = hwMap.servo.get("ramServo");
         transportServo1 = hwMap.servo.get("transervo1");
         transportServo2 = hwMap.servo.get("transervo2");
 
+
+/*
         //Sensors
         beaconSensor = hwMap.i2cDevice.get("cc");
         beaconSensorReader = new I2cDeviceSynchImpl(beaconSensor, I2cAddr.create8bit(0x3c), false);
         beaconSensorReader.engage();
         gyro = hwMap.gyroSensor.get("gyro");
         teamSwitch = hwMap.digitalChannel.get("teamSwitch");
-        lineSensor = hwMap.opticalDistanceSensor.get("lineSensor");
+        lineSensor = hwMap.opticalDistanceSensor.get("lineSensor");*/
 
         //Set the directions for each motor
-        leftMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightMotor.setDirection(DcMotor.Direction.FORWARD);
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
         leftShooterMotor.setDirection(DcMotor.Direction.FORWARD);
         rightShooterMotor.setDirection(DcMotor.Direction.REVERSE);
-        capBallMotor.setDirection(DcMotor.Direction.FORWARD);
 
         //allow shooter motors to coast
         leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        servoController = hwMap.servoController.get("sc");
+        servoController.pwmDisable();
 
         // Set all motors to zero power
         leftMotor.setPower(0);
@@ -106,7 +115,7 @@ public class RobotHardware {
         intakeMotor.setPower(0);
         leftShooterMotor.setPower(0);
         rightShooterMotor.setPower(0);
-        capBallMotor.setPower(0);
+
 
         //Set motors to their appropriate modes
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -114,7 +123,7 @@ public class RobotHardware {
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        capBallMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
     public void anushalizeRobotHardware() {
@@ -123,21 +132,6 @@ public class RobotHardware {
         transportServo2.setPosition(transport2Down);
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-
-    public void tankDrive(double left, double right) {
-
-        if (Math.abs(left) < .15) {
-            leftMotor.setPower(0);
-        } else {
-            leftMotor.setPower(left);
-        }
-
-        if (Math.abs(right) < .15) {
-            rightMotor.setPower(0);
-        } else {
-            rightMotor.setPower(right);
-        }
     }
 
     public void changeDriveTrainMode(DcMotor.RunMode mode){
@@ -170,10 +164,22 @@ public class RobotHardware {
         transportServo2.setPosition(transport2Down);
     }
 
+    public void setTransport1GoSlowly() { transportServo1.setPosition(transport1GoSlowly);}
+
+    public void setTransport2GoSlowly() { transportServo2.setPosition(transport2GoSlowly);}
+
+    public void setTransport1GoSlowlyTarget() { transportServo1.setPosition(transport1GoSlowlyTarget);}
+
+    public void setTransport2GoSlowlyTarget() { transportServo2.setPosition(transport2GoSlowlyTarget);}
+
     public void setTransportsUp(){
-        setTransport1Up();
-        setTransport2Up();
+        if(!transportsAreUp()){
+            setTransport1GoSlowly();
+            setTransport2GoSlowly();
+        }
+
     }
+
 
     public void setTransportsDown(){
         setTransport1Down();

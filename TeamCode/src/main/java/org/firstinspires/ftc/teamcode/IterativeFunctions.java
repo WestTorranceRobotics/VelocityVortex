@@ -144,6 +144,21 @@ public class IterativeFunctions extends OpMode {
         }
     }
 
+    public void tankDrive(double left, double right) {
+
+        if (Math.abs(left) < .15) {
+            robot.leftMotor.setPower(0);
+        } else {
+            robot.leftMotor.setPower(left);
+        }
+
+        if (Math.abs(right) < .15) {
+            robot.rightMotor.setPower(0);
+        } else {
+            robot.rightMotor.setPower(right);
+        }
+    }
+
 
 
 }
