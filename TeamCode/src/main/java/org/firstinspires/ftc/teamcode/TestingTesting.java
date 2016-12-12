@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
@@ -15,46 +16,60 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //@Disabled
 public class TestingTesting extends OpMode
 {
-    private ElapsedTime runtime = new ElapsedTime();
     //RobotHardware robot = new RobotHardware();
 
-    I2cDevice beaconSensor  = null;
+    ColorSensor beaconSensor  = null;
     I2cDeviceSynch beaconSensorReader = null;
     public ServoController servoController = null;
     public Servo ramServo = null;
+    public Servo transportservo1 = null;
 
     boolean isPressed = false;
     boolean isRed = true;
+    boolean beaconIsRed = false;
 
     byte[] colorCcache;
 
 
     @Override
     public void init() {
-        beaconSensor = hardwareMap.i2cDevice.get("cc");
-        beaconSensorReader = new I2cDeviceSynchImpl(beaconSensor, I2cAddr.create8bit(0x3c), false);
-        beaconSensorReader.engage();
+        beaconSensor = hardwareMap.colorSensor.get("colorsensor");
+        //beaconSensorReader = new I2cDeviceSynchImpl(beaconSensor, I2cAddr.create8bit(0x3c), false);
+        //beaconSensorReader.engage();
+        transportservo1 = hardwareMap.servo.get("transervo1");
         ramServo = hardwareMap.servo.get("ramservo");
         servoController = hardwareMap.servoController.get("sv1");
-        beaconSensorReader.engage();
-        beaconSensorReader.write8(3, 0);
+        ////beaconSensorReader.engage();
+      //  beaconSensorReader.write8(3, 0);
+        beaconSensor.enableLed(false);
     }
 
     @Override
     public void init_loop() {
-        ramServo.setPosition(0);
+        ramServo.setPosition(.5);
+        transportservo1.setPosition(.4);
+
+        telemetry.addData("red", beaconSensor.red());
+        telemetry.addData("blue", beaconSensor.blue());
     }
 
     @Override
     public void start() {
-        runtime.reset();
+
     }
 
     @Override
     public void loop() {
 
+        if(beaconSensor.blue()>beaconSensor.red()) {
+            beaconIsRed = false;
+        } else {
+            beaconIsRed = true;
+        }
+
         telemetry.addData("team is red", isRed);
-        telemetry.addData("color", colorCcache);
+        telemetry.addData("beaconisred", beaconIsRed);
+
 
         if(gamepad1.a && !isPressed){
             isRed = !isRed;
@@ -63,23 +78,23 @@ public class TestingTesting extends OpMode
             isPressed = false;
         }
 
-        if (sameCola(colorCcache[0] & 0xFF)) {
+        if (sameCola()) {
             ramServo.setPosition(1);
         } else {
-            ramServo.setPosition(-1);
+            ramServo.setPosition(0);
         }
 
-        colorCcache = beaconSensorReader.read(0x04, 1);
+
     }
 
     @Override
     public void stop() {
     }
 
-    public boolean sameCola(int colorNumber){
-        if(colorNumber == 10 && isRed) {
+    public boolean sameCola(){
+        if(beaconIsRed && isRed) {
             return true;
-        } else if (colorNumber == 3 && !isRed) {
+        } else if (!beaconIsRed && !isRed) {
             return true;
         } else {
             return false;
