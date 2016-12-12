@@ -66,7 +66,6 @@ public class ShootandParkonRamp extends OpMode {
 
     @Override
     public void init_loop() {
-        robot.anushalizeRobotHardware();
     }
 
     @Override
@@ -95,19 +94,19 @@ public class ShootandParkonRamp extends OpMode {
                 //moving to position, while waiting for drive motors not to be busy
                 if (!fanctions.driveMotorsAreBusy()) {
                     newState(state.STATE_UP);
-                    robot.setTransportsUp();
+                   // robot.setTransportsUp();
                 }
                 break;
 
             case STATE_UP:
-                if (robot.transportsAreUp()) {
+                if (/*robot.transportsAreUp()*/true) {
                     newState(state.STATE_WAIT);
                 }
                 break;
             //Moving transport ramp up to shoot ball.
             case STATE_WAIT:
                 if (stateTime.time() >= .5) {
-                    robot.setTransportsDown();
+                   // robot.setTransportsDown();
                     fanctions.setDegrees(-45);
                     newState(state.STATE_TURN);
                 }

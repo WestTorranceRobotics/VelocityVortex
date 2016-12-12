@@ -52,7 +52,7 @@ public class IterativeAutoTemplate extends OpMode
 
     @Override
     public void init_loop() {
-        robot.anushalizeRobotHardware();
+
     }
 
     @Override

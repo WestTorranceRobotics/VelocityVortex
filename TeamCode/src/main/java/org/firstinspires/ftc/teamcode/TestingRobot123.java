@@ -37,23 +37,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="MrStealYoBeacons", group="WTR")  // @Autonomous(...) is the other common choice
-@Disabled
-public class MrStealYoBeacons extends OpMode
+@Autonomous(name="Robot Test", group="WTR")  // @Autonomous(...) is the other common choice
+//@Disabled
+public class TestingRobot123 extends OpMode
 {
     private ElapsedTime runtime = new ElapsedTime();
-    private ElapsedTime stateTime = new ElapsedTime();
     RobotHardware robot = new RobotHardware();
     IterativeFunctions fanctions = new IterativeFunctions(robot);
-
-    byte[] colorCcache;
-
-    private enum state{
-
-
-    }
-
-    state currentState;
 
     @Override
     public void init() {
@@ -62,7 +52,7 @@ public class MrStealYoBeacons extends OpMode
 
     @Override
     public void init_loop() {
-        robot.anushalizeRobotHardware();
+        fanctions.anushalizeRobotHardware();
     }
 
     @Override
@@ -72,8 +62,6 @@ public class MrStealYoBeacons extends OpMode
 
     @Override
     public void loop() {
-
-        telemetry.addData("state", currentState);
 
     }
 

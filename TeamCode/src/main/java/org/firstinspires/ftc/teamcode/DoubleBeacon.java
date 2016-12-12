@@ -90,7 +90,6 @@ public class DoubleBeacon extends OpMode
 
     @Override
     public void init_loop() {
-        robot.anushalizeRobotHardware();
     }
 
     @Override
@@ -158,9 +157,9 @@ public class DoubleBeacon extends OpMode
 
             case STATE_SENSE_COLOR:
                 if (fanctions.sameCola(colorCcache[0] & 0xFF)) {
-                    robot.setRamServoRight();
+                  // robot.setRamServoRight();
                 } else {
-                    robot.setRamServoLeft();
+                  //  robot.setRamServoLeft();
                 }
                 newState(state.STATE_WAIT_TO_PRESS_RIGHT_COLOR);
                 break;
@@ -197,9 +196,9 @@ public class DoubleBeacon extends OpMode
 
             case STATE_SENSE_COLOR_TWO:
                 if(fanctions.sameCola(colorCcache[0] & 0xFF)) {
-                    robot.setRamServoRight();
+                 //   robot.setRamServoRight();
                 } else {
-                    robot.setRamServoLeft();
+                   // robot.setRamServoLeft();
                 }
                 newState(state.STATE_WAIT_TO_PRESS_RIGHT_COLOR_TWO);
                 break;

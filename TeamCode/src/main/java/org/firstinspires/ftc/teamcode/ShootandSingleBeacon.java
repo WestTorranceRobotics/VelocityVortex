@@ -90,7 +90,6 @@ public class ShootandSingleBeacon extends OpMode
 
     @Override
     public void init_loop() {
-        robot.anushalizeRobotHardware();
     }
 
     @Override
@@ -105,7 +104,7 @@ public class ShootandSingleBeacon extends OpMode
         switch (currentState) {
 
             case STATE_SPOOL_UP_SHOOTERS:
-                robot.setShooterSpeed(.8);
+               // robot.setShooterSpeed(.8);
                 newState(state.STATE_DRIVE_TO_VORTEX);
                 break;
             //Rev these shooters.
@@ -118,14 +117,14 @@ public class ShootandSingleBeacon extends OpMode
 
             case STATE_WAIT_FOR_SHOOTERS:
                 if (robot.leftShooterMotor.getPower() >= .8 && robot.rightShooterMotor.getPower() >= .8) {
-                    robot.setTransportsUp();
+                    //robot.setTransportsUp();
                     newState(state.STATE_UP);
                 }
                 break;
             //Waiting for shooters to get power.
 
             case STATE_UP:
-                if (robot.transportsAreUp()) {
+                if (/*robot.transportsAreUp()*/true) {
                     newState(state.STATE_WAIT);
                 }
                 break;
@@ -133,14 +132,14 @@ public class ShootandSingleBeacon extends OpMode
 
             case STATE_WAIT:
                 if (stateTime.time() >= .5) {
-                    robot.setTransportsDown();
+                   // robot.setTransportsDown();
                     newState(state.STATE_SHUT_OFF_SHOOTERS);
                 }
                 break;
             //Waiting half a second to move transport ramp back down.
 
             case STATE_SHUT_OFF_SHOOTERS:
-                robot.setShooterSpeed(0);
+               // robot.setShooterSpeed(0);
                 fanctions.setDegrees(-45);
                 newState(state.STATE_TURN_LEFT);
                 break;
@@ -189,9 +188,9 @@ public class ShootandSingleBeacon extends OpMode
 
             case STATE_SENSE_COLOR:
                 if(fanctions.sameCola(colorCcache[0] & 0xFF)) {
-                    robot.setRamServoRight();
+                   // robot.setRamServoRight();
                 } else {
-                    robot.setRamServoLeft();
+                  //  robot.setRamServoLeft();
                 }
                 newState(state.STATE_WAIT_FOR_RAM);
                 break;

@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="big shoots", group="WTR")  // @Autonomous(...) is the other common choice
+@Autonomous(name="Turn test", group="WTR")  // @Autonomous(...) is the other common choice
 //@Disabled 
-public class ShootAndParkInCenter extends OpMode {
+public class ShootandTestTurning extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime stateTime = new ElapsedTime();
    // RobotHardware robot = new RobotHardware();
@@ -19,13 +19,13 @@ public class ShootAndParkInCenter extends OpMode {
     private enum state {
         STATE_SPECIAL_SNOWFLAKE,
         STATE_SPOOL_UP_SHOOTERS,
-        //Rev these shooters. 
+        //Rev these shooters.
         STATE_DRIVE_TO_VORTEX,
-        //Driving to vortex. 
+        //Driving to vortex.
         STATE_WAIT_FOR_SHOOTERS,
-        //Waiting for shooters to get power. 
+        //Waiting for shooters to get power.
         STATE_UP,
-        //Moving transport ramp up to shoot ball. 
+        //Moving transport ramp up to shoot ball.
         STATE_WAIT,
         //Waiting half a second to move transport ramp back down.
         STATE_WAIT_MORE,
@@ -35,7 +35,7 @@ public class ShootAndParkInCenter extends OpMode {
         //Waiting half a second to move transport ramp back down.
         STATE_SHUT_OFF_SHOOTERS,
         //Turning off shooter motors.
-        STATE_PARK_IN_CENTER,
+        STATE_TEST_TURNING,
     }
     private state currentState = null;
 
@@ -46,6 +46,7 @@ public class ShootAndParkInCenter extends OpMode {
     public DcMotor  rightShooterMotor = null;
     public ServoController servoController = null;
     public Servo transportServo1 = null;
+    public GyroSensor gyro           = null;
 
 
     @Override
@@ -155,12 +156,16 @@ public class ShootAndParkInCenter extends OpMode {
             case STATE_SHUT_OFF_SHOOTERS:
                 leftShooterMotor.setPower(0);
                 rightShooterMotor.setPower(0);
-                newState(state.STATE_PARK_IN_CENTER);
+                setPos(20, .6);
+                newState(state.STATE_TEST_TURNING);
                 break;
+
             //Turning off shooter motors.
 
-            case STATE_PARK_IN_CENTER:
-                setPos(60, .6);
+            case STATE_TEST_TURNING:
+                if (!driveMotorsAreBusy()){
+                    setDegrees(90);
+                }
                 break;
 
         }
@@ -194,8 +199,28 @@ public class ShootAndParkInCenter extends OpMode {
     }
 
     public boolean driveMotorsAreBusy() {
-
         return (leftMotor.isBusy() || rightMotor.isBusy());
+    }
+
+    public int degrees = 0;
+
+    public void setDegrees(int degrees){
+        this.degrees = degrees;
+        leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public boolean doneTurning (){
+        //returmimg if the motors are done turning
+        int intheading = gyro.getHeading();
+        return (Math.abs(gyro.getHeading()-intheading) >= Math.abs(degrees));
+    }
+
+    public void turn() {
+        //setting the motors to turning power
+        int multiplier = (degrees / Math.abs(degrees));
+        leftMotor.setPower(.6 * multiplier);
+        rightMotor.setPower(-.6 * multiplier);
     }
 
     public boolean transportsAreUp (){
