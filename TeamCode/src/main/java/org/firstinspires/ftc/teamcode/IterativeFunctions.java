@@ -27,7 +27,7 @@ public class IterativeFunctions {
     public void setPos(double inches, double goes) {
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+        //TODO test this I hope it works if not good luck use telemetry
         int ticks = (int) (inches * (robot.inchToTickConversion));
         int currentleft = robot.leftMotor.getCurrentPosition();
         int currentright = robot.rightMotor.getCurrentPosition();
@@ -46,6 +46,10 @@ public class IterativeFunctions {
 
     public boolean driveMotorsAreBusy() {
         return (robot.leftMotor.isBusy() && robot.rightMotor.isBusy());
+        //TODO this isnt that big a problem, but I would change the name to doneDriving
+        //TODO or something and inverse the output so that it returns
+        //TODO (!robot.leftMotor.isBusy() && !robot.rightMotor.isBusy())
+        //TODO then it makes a little more sense in context of the exit condition
     }
 
     public void setDegrees(int degrees){
@@ -75,16 +79,39 @@ public class IterativeFunctions {
     }
 
     public double PIDTurn(){
+        //TODO this function still does not yeild a perfect 90 degree turn which should be attainable to a certain degree. use telemetry to see how much the robot is actually turning
+        //TODO if the robot doesnt know its isnt turning 90 degrees, good  luck fixing it. my tips below could be the answer in either situation, but dont spend too much time on it if you dont understand it
         double error = degrees - (robot.gyro.getHeading() - initheading);
         double motorPower = .027 * error;
         return motorPower;
+        //TODO I would recommend adding a derivative term to this feedback loop, which may entail increasing the proportional gain
+        //TODO if you are confused by the derivative term, forget that word, its just a stupid calc term. all derivative means is rate of change
+        //TODO which means all you have to do is count the time between loops and see how many degress you go, divide and you have your rate in degrees/second
+        //TODO what may be easier is using the raw data from the gyro as your derivative, because the gyro integrates on the chip, which is why you get a heading and dont have to do all that stupid time math
+        //TODO this unitegrated rate may be robot.gyro.rawZ();, but i am unsure and a quick google search did not turn up any answer. remmeber to watch that video again if youre lost or havent seen it in the first place
+        //TODO heres the link https://www.youtube.com/watch?v=4Y7zG48uHRo
+        //TODO i also found this video which demonstrates PID on a real system well    https://www.youtube.com/watch?v=fusr9eTceEo
     }
+
+    //TODO if you use PIDTurn, you need an exit condition. ill make an example of how it could work below
+
+    /*
+    public boolean PIDWithinTolerance() {
+        double error = degrees - (robot.gyro.getHeading() - initheading);
+        return error <= turnTolerance;
+        //TODO turn tolerance here would be a degree value that is in an acceptable tolerance of turning. Essentially, its how close youre willing to get to the target degree and call it good enough
+        //TODO a turn tolerance of 1 would mean the code would stop turning once the robot turned within 1 degree of the target degrees to turn. Youll have to decide what is a good tolerance.
+        //TODO remember that
+    }
+    */
+
 
     public boolean sameCola(){
         if(robot.teamSwitch.getState() == beaconIsRed) {
             return true;
         } else {
             return false;
+
         }
     }
 
@@ -107,6 +134,7 @@ public class IterativeFunctions {
         robot.transportServo.setPosition(robot.transport1Down);
         robot.leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //TODO I would try to use this if I were you guys, just another step to take out, but you may have to tweak this function a little, use it for servos and stuff
     }
 
     public void changeDriveTrainMode(DcMotor.RunMode mode){
