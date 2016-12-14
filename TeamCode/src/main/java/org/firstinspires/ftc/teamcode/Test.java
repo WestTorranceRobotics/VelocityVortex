@@ -34,65 +34,70 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-@Autonomous(name="AutoTemplate", group="WTR")
-@Disabled
-public class AutoTemplate extends LinearOpMode {
-
-    RobotHardware robot = new RobotHardware();
+@Autonomous(name="test", group="WTR")  // @Autonomous(...) is the other common choice
+//@Disabled
+public class Test extends OpMode
+{
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime statetime = new ElapsedTime();
+    RobotHardware robot = new RobotHardware();
+    IterativeFunctions fanctions = new IterativeFunctions(robot);
+
+    private enum state {
+        STATE_TURN,
+        STATE_END
+    }
+
+    state currrentState;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void init() {
         robot.initRobotHardware(hardwareMap);
-        waitForStart();
+        robot.gyro.calibrate();
+    }
+
+    @Override
+    public void init_loop() {
+        fanctions.setTransportDown();
+
+    }
+
+    @Override
+    public void start() {
         runtime.reset();
+        newState(state.STATE_TURN);
+        fanctions.setDegrees(90);
     }
 
-    public void setPos(double inches, double goes) {
+    @Override
+    public void loop() {
 
-        robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        int ticks = (int)(inches*robot.inchToTickConversion);
-        int currentleft = robot.leftMotor.getCurrentPosition();
-        int currentright = robot.rightMotor.getCurrentPosition();
+        telemetry.addData("state", currrentState);
 
-        robot.leftMotor.setTargetPosition(ticks+ currentleft);
-        robot.rightMotor.setTargetPosition(ticks+ currentright);
-        robot.leftMotor.setPower(goes);
-        robot.rightMotor.setPower(goes);
-    }
-    public void endmove(){
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
-    }
-    public void runtoposition(double inches, double speed) {
-        setPos(inches, speed);
-        while (robot.leftMotor.isBusy() && robot.rightMotor.isBusy() && opModeIsActive()) {
-
+        switch (currrentState) {
+            case STATE_TURN:
+                if(fanctions.doneTurning()){
+                    newState(state.STATE_END);
+                    fanctions.endmove();
+                } else{
+                   fanctions.turn(fanctions.PIDTurn());
+                }
+                break;
+            case STATE_END:
+                break;
         }
-        endmove();
     }
 
-    public void turn(int degrees) {
-        int intheading = robot.gyro.getHeading();
-
-        int multiplier = (degrees/Math.abs(degrees));
-
-        robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        while (Math.abs(robot.gyro.getHeading()-intheading) <= Math.abs(degrees)) {
-
-            robot.leftMotor.setPower(multiplier * .6);
-            robot.rightMotor.setPower(-.6 * multiplier);
-
-        }
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
+    @Override
+    public void stop() {
     }
+
+    private void newState(state newState) {
+        currrentState = newState;
+        statetime.reset();
+    }
+
 }

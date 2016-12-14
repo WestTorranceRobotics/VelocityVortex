@@ -40,22 +40,19 @@ public class RobotHardware {
 
     //Sensors
     public OpticalDistanceSensor lineSensor    = null;
-    public I2cDevice beaconSensor              = null;
-    public I2cDeviceSynch beaconSensorReader   = null;
+    public ColorSensor beaconSensor              = null;
     public GyroSensor gyro                     = null;
-    public DigitalChannel teamSwitch           = null;//blue is true, red is false
+    public DigitalChannel teamSwitch           = null;
 
 
     HardwareMap hwMap           =  null;
-    private ElapsedTime period  = new ElapsedTime();
 
-    public ServoController servoController = null;
 
     //Constants for servos
     public double ramServoRight        = 1;
-    public double ramServoLeft         = -1;
-    public double ramServoMiddle       = 0;
-    public double transport1Up         = .275;
+    public double ramServoLeft         = 0;
+    public double ramServoMiddle       = 0.5;
+    public double transport1Up         = .35;
     public double transport1Down       = .4;
     public double inchToTickConversion = 118.8356;
 
@@ -72,17 +69,15 @@ public class RobotHardware {
         rightShooterMotor = hwMap.dcMotor.get("RShootmotor");
 
         //Servos
-        //ramServo = hwMap.servo.get("ramServo");
+        ramServo = hwMap.servo.get("ramservo");
         transportServo = hwMap.servo.get("transervo1");
-        /*
+
         //Sensors
-        beaconSensor = hwMap.i2cDevice.get("cc");
-        beaconSensorReader = new I2cDeviceSynchImpl(beaconSensor, I2cAddr.create8bit(0x3c), false);
-        beaconSensorReader.engage();
+        beaconSensor = hwMap.colorSensor.get("colorsensor");
         gyro = hwMap.gyroSensor.get("gyro");
-        teamSwitch = hwMap.digitalChannel.get("teamSwitch");
-        lineSensor = hwMap.opticalDistanceSensor.get("lineSensor");
-        */
+       // teamSwitch = hwMap.digitalChannel.get("teamSwitch");
+        //lineSensor = hwMap.opticalDistanceSensor.get("lineSensor");
+
         //Set the directions for each motor
         leftMotor.setDirection(DcMotor.Direction.REVERSE);
         rightMotor.setDirection(DcMotor.Direction.FORWARD);
