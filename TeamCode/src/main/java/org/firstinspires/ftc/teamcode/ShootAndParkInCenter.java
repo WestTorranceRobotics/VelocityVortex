@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="big shoots", group="WTR")  // @Autonomous(...) is the other common choice
+@Autonomous(name="ShootAndParkInCenter", group="WTR")  // @Autonomous(...) is the other common choice
 //@Disabled 
 public class ShootAndParkInCenter extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
@@ -36,6 +36,7 @@ public class ShootAndParkInCenter extends OpMode {
         STATE_SHUT_OFF_SHOOTERS,
         //Turning off shooter motors.
         STATE_PARK_IN_CENTER,
+        STATE_STOP_MOVING,
     }
     private state currentState = null;
 
@@ -72,6 +73,8 @@ public class ShootAndParkInCenter extends OpMode {
     @Override
     public void init_loop() {
         SetServo(0.40);
+        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     @Override
@@ -84,12 +87,13 @@ public class ShootAndParkInCenter extends OpMode {
     public void loop() {
 
         telemetry.addData("state", currentState);
-
+        telemetry.addData("Len", leftMotor.getCurrentPosition());
+        telemetry.addData("Ren", rightMotor.getCurrentPosition());
         switch (currentState) {
 
             case STATE_SPOOL_UP_SHOOTERS:
                 if (leftShooterMotor.getPower() >= 1 && rightShooterMotor.getPower() >= 1){
-                    SetServo(.4);
+                    SetServo(.40);
                     newState(state.STATE_DRIVE_TO_VORTEX);
                 }else{
                     leftShooterMotor.setPower(1);
@@ -104,48 +108,41 @@ public class ShootAndParkInCenter extends OpMode {
             //Driving to vortex.
 
             case STATE_WAIT_FOR_SHOOTERS:
-                if (stateTime.time() >= 0) {
+                if (stateTime.time() >= 1) {
                     newState(state.STATE_UP);
                 }
                 break;
             //Waiting for shooters to get power.
 
             case STATE_UP:
-
-                if(!transportsAreUp()){
-                    SetServo(currentPos - 1.75);
-                } else {
-                    newState(state.STATE_WAIT);
-                }
+                SetServo(.275);
+                newState(state.STATE_WAIT);
 
                 break;
             //Moving transport ramp up to shoot ball.
 
             case STATE_WAIT:
-                if (stateTime.time() >= .5) {
+                if (stateTime.time() >= 1) {
                     SetServo(0.4);
                     newState(state.STATE_WAIT_MORE);
                 }
                 break;
             case STATE_WAIT_MORE:
-                if (stateTime.time() >= 3){
+                if (stateTime.time() >= 2){
                     newState(state.STATE_UP2);
                 }
                 break;
             //Rev these shooters.
             case STATE_UP2:
-
-                if(!transportsAreUp()){
-                    SetServo(currentPos - 1.75);
-                } else {
-                    newState(state.STATE_WAIT2);
-                }
+                SetServo(.275
+                );
+                newState(state.STATE_WAIT2);
 
                 break;
             //Moving transport ramp up to shoot ball.
 
             case STATE_WAIT2:
-                if (stateTime.time() >= .5) {
+                if (stateTime.time() >= 1) {
                     SetServo(0.4);
                     newState(state.STATE_SHUT_OFF_SHOOTERS);
                 }
@@ -160,9 +157,16 @@ public class ShootAndParkInCenter extends OpMode {
             //Turning off shooter motors.
 
             case STATE_PARK_IN_CENTER:
-                setPos(60, .6);
+                setPos(-70, .9);
+                newState(state.STATE_STOP_MOVING);
                 break;
 
+            case STATE_STOP_MOVING:
+                 if (stateTime.time() >= 4) {
+                    leftMotor.setPower(0);
+                    rightMotor.setPower(0);
+                }
+                break;
         }
 
     }
@@ -185,7 +189,7 @@ public class ShootAndParkInCenter extends OpMode {
         leftMotor.setTargetPosition(ticks + currentleft);
         rightMotor.setTargetPosition(ticks + currentright);
         leftMotor.setPower(goes);
-        rightMotor.setPower(goes);
+        rightMotor.setPower(goes*.55);
     }
 
     public void endmove() {
@@ -211,7 +215,7 @@ public class ShootAndParkInCenter extends OpMode {
     //}
 
     public double currentPos = 0;
-    public double transport1Up = 0.275;
+    public double transport1Up = 0.37;
     //public double transport1Down = 0;
 
 } 

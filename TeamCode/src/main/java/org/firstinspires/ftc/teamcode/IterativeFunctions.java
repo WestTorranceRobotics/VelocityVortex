@@ -60,8 +60,12 @@ public class IterativeFunctions {
         robot.leftMotor.setTargetPosition(ticks + currentleft);
         robot.rightMotor.setTargetPosition(ticks + currentright);
         robot.leftMotor.setPower(goes);
-        robot.rightMotor.setPower(goes);
+        robot.rightMotor.setPower(goes * .5);
     }
+
+    boolean isPressed = false;
+    boolean isRed = true;
+    boolean beaconIsRed = false;
 
     public void endmove() {
         robot.leftMotor.setPower(0);
@@ -98,10 +102,10 @@ public class IterativeFunctions {
         robot.rightMotor.setPower(-power * multiplier);
     }
 
-    public boolean sameCola(int colorNumber){
-        if(colorNumber == 10 && !robot.teamSwitch.getState()) {
+    public boolean sameCola(){
+        if(beaconIsRed && isRed) {
             return true;
-        } else if (colorNumber == 3 && robot.teamSwitch.getState()) {
+        } else if (!beaconIsRed && !isRed) {
             return true;
         } else {
             return false;

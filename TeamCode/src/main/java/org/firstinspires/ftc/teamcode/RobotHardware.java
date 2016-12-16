@@ -40,7 +40,7 @@ public class RobotHardware {
 
     //Sensors
     public OpticalDistanceSensor lineSensor    = null;
-    public I2cDevice beaconSensor              = null;
+    public ColorSensor beaconSensor              = null;
     public I2cDeviceSynch beaconSensorReader   = null;
     public GyroSensor gyro                     = null;
     public DigitalChannel teamSwitch           = null;//blue is true, red is false
@@ -74,15 +74,16 @@ public class RobotHardware {
         //Servos
         //ramServo = hwMap.servo.get("ramServo");
         transportServo = hwMap.servo.get("transervo1");
-        /*
+
         //Sensors
-        beaconSensor = hwMap.i2cDevice.get("cc");
-        beaconSensorReader = new I2cDeviceSynchImpl(beaconSensor, I2cAddr.create8bit(0x3c), false);
-        beaconSensorReader.engage();
+        beaconSensor = hwMap.colorSensor.get("colorsensor");
+        //beaconSensorReader = new I2cDeviceSynchImpl(beaconSensor, I2cAddr.create8bit(0x3c), false);
+        //beaconSensorReader.engage();
         gyro = hwMap.gyroSensor.get("gyro");
         teamSwitch = hwMap.digitalChannel.get("teamSwitch");
         lineSensor = hwMap.opticalDistanceSensor.get("lineSensor");
-        */
+
+
         //Set the directions for each motor
         leftMotor.setDirection(DcMotor.Direction.REVERSE);
         rightMotor.setDirection(DcMotor.Direction.FORWARD);

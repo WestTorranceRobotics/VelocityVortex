@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Iterative TeleOp", group="WTR")  // @Autonomous(...) is the other common choice
+@TeleOp(name="TeleOp", group="WTR")  // @Autonomous(...) is the other common choice
 //@Disabled
 public class VelocityVortexIterativeTeleOp extends OpMode {
 

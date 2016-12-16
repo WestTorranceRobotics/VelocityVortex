@@ -101,9 +101,9 @@ public class DoubleBeacon extends OpMode
     public void loop() {
         colorCcache = robot.beaconSensorReader.read(0x04, 1);
 
-        telemetry.addData("state", currentstate);
+        telemetry.addData("state", currentstate);}
 
-        switch (currentstate) {
+       /* switch (currentstate) {
 
             case STATE_MOVE_A_BIT:
                 fanctions.setPos(12,.6);
@@ -220,7 +220,7 @@ public class DoubleBeacon extends OpMode
 
         }
 
-    }
+    }*/
 
     private void newState(state newState) {
         stateTime.reset();

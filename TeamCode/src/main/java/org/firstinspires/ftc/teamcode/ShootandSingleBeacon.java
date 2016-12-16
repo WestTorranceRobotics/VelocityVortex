@@ -38,13 +38,17 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Iterative Auto", group="WTR")  // @Autonomous(...) is the other common choice
-@Disabled
+//@Disabled
 public class ShootandSingleBeacon extends OpMode
 {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime stateTime = new ElapsedTime();
     RobotHardware robot = new RobotHardware();
     IterativeFunctions fanctions = new IterativeFunctions(robot);
+
+    boolean isPressed = false;
+    boolean isRed = true;
+    boolean beaconIsRed = false;
 
     byte[] colorCcache;
 
@@ -65,6 +69,7 @@ public class ShootandSingleBeacon extends OpMode
         //Turn left 45 degrees.
         STATE_MOVE_FORTYTWO_INCHES,
         //Move forty two inches forward.
+        STATE_WAIT_TO_TURN,
         STATE_TURN_RIGHT,
         //Turn right 45 degrees.
         STATE_SENSE_WHITE_LINE,
@@ -86,62 +91,79 @@ public class ShootandSingleBeacon extends OpMode
     @Override
     public void init() {
         robot.initRobotHardware(hardwareMap);
+        robot.beaconSensor.enableLed(false);
     }
 
     @Override
     public void init_loop() {
+        robot.transportServo.setPosition(.4);
+        robot.ramServo.setPosition(.5);
     }
 
     @Override
     public void start() {
         runtime.reset();
+        newState(state.STATE_SPOOL_UP_SHOOTERS);
     }
 
     @Override
     public void loop() {
-        colorCcache = robot.beaconSensorReader.read(0x04, 1);
+
         telemetry.addData("state",currentState);
+
+        if(robot.beaconSensor.blue()>robot.beaconSensor.red()) {
+            beaconIsRed = false;
+        } else {
+            beaconIsRed = true;
+        }
+
         switch (currentState) {
 
             case STATE_SPOOL_UP_SHOOTERS:
-               // robot.setShooterSpeed(.8);
-                newState(state.STATE_DRIVE_TO_VORTEX);
+                if (robot.leftShooterMotor.getPower() >= 1 && robot.rightShooterMotor.getPower() >= 1){
+                    robot.transportServo.setPosition(.35);
+                    newState(state.STATE_DRIVE_TO_VORTEX);
+                }else{
+                    robot.leftShooterMotor.setPower(1);
+                    robot.rightShooterMotor.setPower(1);
+                }
                 break;
             //Rev these shooters.
 
             case STATE_DRIVE_TO_VORTEX:
-                fanctions.setPos(48, .6);
-                newState(state.STATE_WAIT_FOR_SHOOTERS);
+                if (stateTime.time() >= .5) {
+                    robot.transportServo.setPosition(0.4);
+                    newState(state.STATE_WAIT_FOR_SHOOTERS);
+                }
                 break;
             //Driving to vortex.
 
             case STATE_WAIT_FOR_SHOOTERS:
-                if (robot.leftShooterMotor.getPower() >= .8 && robot.rightShooterMotor.getPower() >= .8) {
-                    //robot.setTransportsUp();
+                if (stateTime.time() >= .5) {
                     newState(state.STATE_UP);
                 }
                 break;
             //Waiting for shooters to get power.
 
             case STATE_UP:
-                if (/*robot.transportsAreUp()*/true) {
-                    newState(state.STATE_WAIT);
-                }
+                robot.transportServo.setPosition(.275);
+                newState(state.STATE_WAIT);
                 break;
             //Moving transport ramp up to shoot ball.
 
             case STATE_WAIT:
                 if (stateTime.time() >= .5) {
-                   // robot.setTransportsDown();
                     newState(state.STATE_SHUT_OFF_SHOOTERS);
                 }
                 break;
             //Waiting half a second to move transport ramp back down.
 
             case STATE_SHUT_OFF_SHOOTERS:
-               // robot.setShooterSpeed(0);
-                fanctions.setDegrees(-45);
-                newState(state.STATE_TURN_LEFT);
+                if(stateTime.time() >= .5){
+                    robot.transportServo.setPosition(.4);
+                    fanctions.setDegrees(-45);
+                    newState(state.STATE_TURN_LEFT);
+                }
                 break;
             //Turning off shooter motors.
 
@@ -156,10 +178,15 @@ public class ShootandSingleBeacon extends OpMode
                 //Move 45 degrees left.
 
             case STATE_MOVE_FORTYTWO_INCHES:
-                fanctions.setPos(42, .6);
-                fanctions.setDegrees(45);
+                fanctions.setPos(45, .6);
                 newState(state.STATE_TURN_RIGHT);
                 break;
+
+            case STATE_WAIT_TO_TURN:
+                if(!fanctions.driveMotorsAreBusy()){
+                    fanctions.setDegrees(45);
+                    newState(state.STATE_TURN_RIGHT);
+                }
 
             case STATE_TURN_RIGHT:
                 if (fanctions.doneTurning()) {
@@ -174,6 +201,9 @@ public class ShootandSingleBeacon extends OpMode
                 if(robot.lineSensor.getLightDetected() > 0.4) {
                     fanctions.setDegrees(-90);
                     newState(state.STATE_MOVE_LEFT_MORE);
+                }else {
+                    robot.leftMotor.setPower(.6);
+                    robot.rightMotor.setPower(.6);
                 }
                 break;
 
@@ -187,10 +217,10 @@ public class ShootandSingleBeacon extends OpMode
                 break;
 
             case STATE_SENSE_COLOR:
-                if(fanctions.sameCola(colorCcache[0] & 0xFF)) {
-                   // robot.setRamServoRight();
+                if (fanctions.sameCola()) {
+                    robot.ramServo.setPosition(1);
                 } else {
-                  //  robot.setRamServoLeft();
+                    robot.ramServo.setPosition(0);
                 }
                 newState(state.STATE_WAIT_FOR_RAM);
                 break;
