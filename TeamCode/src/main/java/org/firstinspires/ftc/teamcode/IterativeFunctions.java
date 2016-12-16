@@ -18,24 +18,68 @@ public class IterativeFunctions {
 
     public int degrees = 0;
 
+    public int leftTarget = 0;
+
+    public int rightTarget = 0;
+
     public int initheading = 0;
+
+    public int initEncoder = 0;
 
     public boolean beaconIsRed = false;
 
+    public double lastTime = 0;
+
+    public int lastTick = 0;
+
     public int turningError = 0;
 
-    public void setPos(double inches, double goes) {
+    public void setPos(double inches, double power) {
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //TODO test this I hope it works if not good luck use telemetry
+
         int ticks = (int) (inches * (robot.inchToTickConversion));
         int currentleft = robot.leftMotor.getCurrentPosition();
         int currentright = robot.rightMotor.getCurrentPosition();
 
         robot.leftMotor.setTargetPosition(ticks + currentleft);
         robot.rightMotor.setTargetPosition(ticks + currentright);
-        robot.leftMotor.setPower(goes);
-        robot.rightMotor.setPower(goes);
+        robot.leftMotor.setPower(power);
+        robot.rightMotor.setPower(power * .4);
+
+    }
+
+    public void setPIDPos (double inches) {
+        robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        int ticks = (int) (inches * (robot.inchToTickConversion));
+        int currentleft = robot.leftMotor.getCurrentPosition();
+        int currentright = robot.rightMotor.getCurrentPosition();
+
+        leftTarget = (ticks + currentleft);
+        rightTarget = (ticks + currentright);
+    }
+
+    public double leftPIDPower (double inch, double timer) {
+        int error = (leftTarget - (robot.leftMotor.getCurrentPosition() - initEncoder));
+        double traveledTicks = robot.leftMotor.getCurrentPosition() - lastTick;
+        double traveledTime = timer - lastTime;
+        double deriv = (traveledTicks/traveledTime);
+        lastTime = timer;
+        lastTick = robot.leftMotor.getCurrentPosition();
+        return (.0028571 * error) - (0 * deriv);
+
+    }
+
+    public double rightPIDPower (double inch, double timer) {
+        int error = (rightTarget - (robot.rightMotor.getCurrentPosition() - initEncoder));
+        double traveledTicks = robot.rightMotor.getCurrentPosition() - lastTick;
+        double traveledTime = timer - lastTime;
+        double deriv = (traveledTicks/traveledTime);
+        lastTime = timer;
+        lastTick = robot.rightMotor.getCurrentPosition();
+        return (.0028571 * error) - (0 * deriv);
 
     }
 
@@ -44,12 +88,8 @@ public class IterativeFunctions {
         robot.rightMotor.setPower(0);
     }
 
-    public boolean driveMotorsAreBusy() {
-        return (robot.leftMotor.isBusy() && robot.rightMotor.isBusy());
-        //TODO this isnt that big a problem, but I would change the name to doneDriving
-        //TODO or something and inverse the output so that it returns
-        //TODO (!robot.leftMotor.isBusy() && !robot.rightMotor.isBusy())
-        //TODO then it makes a little more sense in context of the exit condition
+    public boolean doneDriving() {
+        return (!robot.leftMotor.isBusy() && !robot.rightMotor.isBusy());
     }
 
     public void setDegrees(int degrees){
@@ -95,15 +135,12 @@ public class IterativeFunctions {
 
     //TODO if you use PIDTurn, you need an exit condition. ill make an example of how it could work below
 
-    /*
+
     public boolean PIDWithinTolerance() {
         double error = degrees - (robot.gyro.getHeading() - initheading);
-        return error <= turnTolerance;
-        //TODO turn tolerance here would be a degree value that is in an acceptable tolerance of turning. Essentially, its how close youre willing to get to the target degree and call it good enough
-        //TODO a turn tolerance of 1 would mean the code would stop turning once the robot turned within 1 degree of the target degrees to turn. Youll have to decide what is a good tolerance.
-        //TODO remember that
+        return Math.abs(error) <= 2;
     }
-    */
+
 
 
     public boolean sameCola(){
