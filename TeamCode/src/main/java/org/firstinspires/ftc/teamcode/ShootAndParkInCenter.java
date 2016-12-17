@@ -25,7 +25,7 @@ public class ShootAndParkInCenter extends OpMode {
         STATE_WAIT_FOR_SHOOTERS,
         //Waiting for shooters to get power. 
         STATE_UP,
-        //Moving transport ramp up to shoot ball. 
+        //Moving transport ramp up to shoot ball.
         STATE_WAIT,
         //Waiting half a second to move transport ramp back down.
         STATE_WAIT_MORE,
@@ -37,6 +37,10 @@ public class ShootAndParkInCenter extends OpMode {
         //Turning off shooter motors.
         STATE_PARK_IN_CENTER,
         STATE_STOP_MOVING,
+        STATE_WAIT_THRID,
+        STATE_WAIT_FOR_SHOOT,
+        STATE_WAIT_FOURTH,
+
     }
     private state currentState = null;
 
@@ -73,6 +77,7 @@ public class ShootAndParkInCenter extends OpMode {
     @Override
     public void init_loop() {
         SetServo(0.40);
+
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
@@ -92,12 +97,12 @@ public class ShootAndParkInCenter extends OpMode {
         switch (currentState) {
 
             case STATE_SPOOL_UP_SHOOTERS:
-                if (leftShooterMotor.getPower() >= 1 && rightShooterMotor.getPower() >= 1){
+                if (leftShooterMotor.getPower() >= .8 && rightShooterMotor.getPower() >= .8){
                     SetServo(.40);
                     newState(state.STATE_DRIVE_TO_VORTEX);
                 }else{
-                    leftShooterMotor.setPower(1);
-                    rightShooterMotor.setPower(1);
+                    leftShooterMotor.setPower(.8);
+                    rightShooterMotor.setPower(.8);
                 }
                 break;
             //Rev these shooters.
@@ -122,17 +127,49 @@ public class ShootAndParkInCenter extends OpMode {
             //Moving transport ramp up to shoot ball.
 
             case STATE_WAIT:
-                if (stateTime.time() >= 1) {
-                    SetServo(0.4);
+                if (stateTime.time() >= 2) {
+                    leftShooterMotor.setPower(0);
+                    rightShooterMotor.setPower(0);
+                    newState(state.STATE_WAIT_FOR_SHOOT);
+                }
+                break;
+
+            case STATE_WAIT_FOR_SHOOT:
+                if (stateTime.time() >= 2.5){
+                    SetServo(.4);
                     newState(state.STATE_WAIT_MORE);
                 }
                 break;
+
             case STATE_WAIT_MORE:
-                if (stateTime.time() >= 2){
-                    newState(state.STATE_UP2);
+                if (stateTime.time() >= 0){
+                    leftShooterMotor.setPower(.7);
+                    rightShooterMotor.setPower(.7);
+                    newState(state.STATE_WAIT_FOURTH);
                 }
                 break;
             //Rev these shooters.
+
+            case STATE_WAIT_FOURTH:
+                if (stateTime.time() >= 1.5){
+                    newState(state.STATE_WAIT_FOURTH);
+                }
+            case STATE_SPECIAL_SNOWFLAKE:
+                if (leftShooterMotor.getPower() >= .7 && rightShooterMotor.getPower() >= .7){
+                    SetServo(.40);
+                    newState(state.STATE_WAIT_THRID);
+                }else{
+                    leftShooterMotor.setPower(.7);
+                    rightShooterMotor.setPower(.7);
+                }
+                break;
+
+            case STATE_WAIT_THRID:
+                if (stateTime.time() >= 2) {
+                    newState(state.STATE_UP2);
+                }
+                break;
+
             case STATE_UP2:
                 SetServo(.275
                 );

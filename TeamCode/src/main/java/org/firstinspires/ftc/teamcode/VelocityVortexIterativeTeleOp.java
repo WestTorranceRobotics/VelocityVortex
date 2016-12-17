@@ -25,6 +25,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
     public DcMotor  rightShooterMotor      = null;
     public ServoController servoController = null;
     public Servo transportServo1           = null;
+    public Servo ramServo                  = null;
 
     @Override
     public void init() {
@@ -36,6 +37,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         rightShooterMotor = hardwareMap.dcMotor.get("RShootmotor");
 
         transportServo1 = hardwareMap.servo.get("transervo1");
+        ramServo = hardwareMap.servo.get("ramservo");
 
         leftMotor.setDirection(DcMotor.Direction.REVERSE);
         rightMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -50,6 +52,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
     @Override
     public void init_loop() {
         SetServo(.5);
+        ramServo.setPosition(0.15);
     }
 
     @Override
