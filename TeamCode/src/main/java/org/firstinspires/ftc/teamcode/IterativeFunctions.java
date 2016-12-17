@@ -134,12 +134,12 @@ public class IterativeFunctions {
     }
 
     //TODO if you use PIDTurn, you need an exit condition. ill make an example of how it could work below
-
-
     public boolean PIDWithinTolerance() {
         double error = degrees - (robot.gyro.getHeading() - initheading);
         return Math.abs(error) <= 2;
     }
+
+    //TODO use the encoders on the shooter motors to make sure they go at the same rate and so that it wont go too fast at full battery
 
 
 
