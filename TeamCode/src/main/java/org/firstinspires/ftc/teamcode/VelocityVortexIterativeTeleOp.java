@@ -92,7 +92,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         if (Math.abs(gamepad1.right_stick_y) < .15) {
             rightMotor.setPower(0);
         } else {
-            rightMotor.setPower(-gamepad1.right_stick_y * .5);
+            rightMotor.setPower(-gamepad1.right_stick_y);
         }
 
         //driver1, right bumper -> intake in, left bumper -> intake out
