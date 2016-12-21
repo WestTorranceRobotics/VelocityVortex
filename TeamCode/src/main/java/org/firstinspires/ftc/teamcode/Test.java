@@ -37,36 +37,73 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Robot Test", group="WTR")  // @Autonomous(...) is the other common choice
+@Autonomous(name="test", group="WTR")  // @Autonomous(...) is the other common choice
 //@Disabled
-public class TestingRobot123 extends OpMode
+public class Test extends OpMode
 {
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime statetime = new ElapsedTime();
     RobotHardware robot = new RobotHardware();
     IterativeFunctions fanctions = new IterativeFunctions(robot);
+
+    private enum state {
+        STATE_MOVE,
+        STATE_END,
+        STATE_TEST_ENCODERS
+    }
+
+    state currrentState;
 
     @Override
     public void init() {
         robot.initRobotHardware(hardwareMap);
+        //TODO add telemetry that tells the driver the gyro is not yet calibrated, something like telemetry.addData("GYRO", "CALIBRATING: DO NOT START!");
+        robot.gyro.calibrate();
+        //TODO add telemetry here that will update the last telemetry to let the driver know the gyro is done calibrating, something like telemetry.addData("GYRO", "CALIBRATION COMPLETE!");
     }
 
     @Override
     public void init_loop() {
-        fanctions.anushalizeRobotHardware();
+        fanctions.setTransportDown();
+
     }
 
     @Override
     public void start() {
         runtime.reset();
+        newState(state.STATE_MOVE);
+        fanctions.setPos(24,.6);
     }
 
     @Override
     public void loop() {
 
+        telemetry.addData("state", currrentState);
+        telemetry.addData("left encoder", robot.leftMotor.getCurrentPosition());
+        telemetry.addData("right encoder", robot.rightMotor.getCurrentPosition());
+        telemetry.addData("degrees", (Math.abs(robot.gyro.getHeading()-fanctions.initheading)));
+        //TODO add a shit ton of telemetry for when you test, anything you can think of that might be usefull, degrees, ticks, inches etc. it helps a lot
+
+        switch (currrentState) {
+            case STATE_MOVE:
+                if (fanctions.doneDriving()) {
+                    fanctions.endmove();
+                    newState(state.STATE_END);
+                }
+                break;
+            case STATE_END:
+                break;
+            //TODO test encoders, if that works you are set, start working on a real auto
+        }
     }
 
     @Override
     public void stop() {
+    }
+
+    private void newState(state newState) {
+        currrentState = newState;
+        statetime.reset();
     }
 
 }
