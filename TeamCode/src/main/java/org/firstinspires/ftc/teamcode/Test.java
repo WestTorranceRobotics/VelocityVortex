@@ -48,7 +48,8 @@ public class Test extends OpMode
 
     private enum state {
         STATE_MOVE,
-        STATE_END
+        STATE_END,
+        STATE_TEST_ENCODERS
     }
 
     state currrentState;
