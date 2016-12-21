@@ -51,7 +51,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
 
     @Override
     public void init_loop() {
-        SetServo(.5);
+        SetServo(.4);
         ramServo.setPosition(0.15);
     }
 
@@ -111,6 +111,14 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         } else {
             rightShooterMotor.setPower(0);
             leftShooterMotor.setPower(0);
+        }
+
+        if(gamepad2.b) {
+            ramServo.setPosition(0);
+        }
+
+        if (gamepad2.x) {
+            ramServo.setPosition(1);
         }
     }
 
