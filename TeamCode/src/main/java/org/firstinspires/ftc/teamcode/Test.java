@@ -35,6 +35,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="test", group="WTR")  // @Autonomous(...) is the other common choice
@@ -59,6 +60,7 @@ public class Test extends OpMode
         robot.initRobotHardware(hardwareMap);
         //TODO add telemetry that tells the driver the gyro is not yet calibrated, something like telemetry.addData("GYRO", "CALIBRATING: DO NOT START!");
         robot.gyro.calibrate();
+        robot.rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         //TODO add telemetry here that will update the last telemetry to let the driver know the gyro is done calibrating, something like telemetry.addData("GYRO", "CALIBRATION COMPLETE!");
     }
 
@@ -71,9 +73,10 @@ public class Test extends OpMode
     @Override
     public void start() {
         runtime.reset();
-        newState(state.STATE_MOVE);
-        fanctions.setPos(24,.6);
+        //newState(state.STATE_MOVE);
+        //fanctions.setPos(24,.6);
     }
+
 
     @Override
     public void loop() {
@@ -84,7 +87,7 @@ public class Test extends OpMode
         telemetry.addData("degrees", (Math.abs(robot.gyro.getHeading()-fanctions.initheading)));
         //TODO add a shit ton of telemetry for when you test, anything you can think of that might be usefull, degrees, ticks, inches etc. it helps a lot
 
-        switch (currrentState) {
+       /* switch (currrentState) {
             case STATE_MOVE:
                 if (fanctions.doneDriving()) {
                     fanctions.endmove();
@@ -94,7 +97,7 @@ public class Test extends OpMode
             case STATE_END:
                 break;
             //TODO test encoders, if that works you are set, start working on a real auto
-        }
+        }*/
     }
 
     @Override
