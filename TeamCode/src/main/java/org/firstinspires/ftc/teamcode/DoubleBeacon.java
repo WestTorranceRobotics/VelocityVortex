@@ -33,13 +33,12 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="ShootAndSingleBeacon", group="WTR")  // @Autonomous(...) is the other common choice
+@Autonomous(name="DoubleBeacon", group="WTR")  // @Autonomous(...) is the other common choice
 //@Disabled
-public class ShootAndSingleBeacon extends OpMode
+public class DoubleBeacon extends OpMode
 {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime stateTime = new ElapsedTime();
@@ -51,18 +50,6 @@ public class ShootAndSingleBeacon extends OpMode
     boolean beaconIsRed = false;
 
     private enum state {
-        STATE_SPOOL_UP_SHOOTERS,
-        STATE_WAIT,
-        STATE_SHOOT_PARTICLE,
-        STATE_WAIT_TWO,
-        STATE_SET_THE_SHOOTER_BACK_TO_ZERO,
-        STATE_WAIT_THREE,
-        STATE_TURN_ON_SHOOTERS_TWO,
-        STATE_WAIT_FOUR,
-        STATE_SET_SERVO_DOWN,
-        STATE_SHOOT_PARTICLE_TWO,
-        STATE_WAIT_FIVE,
-        STATE_TURN_OFF_SHOOTER,
         STATE_MOVE_A_BIT,
         STATE_TIMER,
         STATE_TURN,
@@ -73,7 +60,16 @@ public class ShootAndSingleBeacon extends OpMode
         STATE_TURN_ON_WHITE_LINE,
         STATE_CHOOSE_COLOR,
         STATE_RAM,
-        STATE_LAST_TIMER_LEL_HEHE_XD
+        STATE_LAST_TIMER_LEL_HEHE_XD,
+        STATE_BACK_UP_BOI,
+        STATE_TIMER_OPOP,
+        STATE_TURN_LEL,
+        STATE_FIND_WHITE_LINE_TWO,
+        STATE_TURN_ON_WHITE_LINE_TWO,
+        STATE_CHOOSE_COLOR_TWO,
+        STATE_RAM_TWO,
+        STATE_I_PROMISE_THIS_IS_THE_LAST_TIMER_INSERT_LENNY_HEHE_XD,
+
     }
     private state currentState = null;
 
@@ -114,92 +110,6 @@ public class ShootAndSingleBeacon extends OpMode
         }
 
         switch (currentState) {
-
-            case STATE_SPOOL_UP_SHOOTERS:
-                robot.leftShooterMotor.setPower(.8);
-                robot.rightShooterMotor.setPower(.8);
-                fanctions.setTransportDown();
-                newState(state.STATE_WAIT);
-                break;
-
-            case STATE_WAIT:
-                if (stateTime.time() >= 1) {
-                    newState(state.STATE_SHOOT_PARTICLE);
-                }
-                break;
-            //Waiting for shooters to get power.
-
-            case STATE_SHOOT_PARTICLE:
-                robot.transportServo.setPosition(.275);
-                newState(state.STATE_SET_THE_SHOOTER_BACK_TO_ZERO);
-
-                break;
-            //Moving transport ramp up to shoot ball.
-
-            case STATE_SET_THE_SHOOTER_BACK_TO_ZERO:
-                if (stateTime.time() >= 2) {
-                    robot.leftShooterMotor.setPower(0);
-                    robot.rightShooterMotor.setPower(0);
-                    newState(state.STATE_WAIT_THREE);
-                }
-                break;
-
-            case STATE_WAIT_THREE:
-                if (stateTime.time() >= 2.5) {
-                    fanctions.setTransportDown();
-                    newState(state.STATE_TURN_ON_SHOOTERS_TWO);
-                }
-                break;
-
-            case STATE_TURN_ON_SHOOTERS_TWO:
-                if (stateTime.time() >= 0) {
-                    robot.leftShooterMotor.setPower(.7);
-                    robot.rightShooterMotor.setPower(.7);
-                    newState(state.STATE_WAIT_FOUR);
-                }
-                break;
-            //Rev these shooters.
-
-            case STATE_WAIT_FOUR:
-                if (stateTime.time() >= 1.5) {
-                    newState(state.STATE_SET_SERVO_DOWN);
-                }
-                break;
-
-            case STATE_SET_SERVO_DOWN:
-                robot.leftShooterMotor.setPower(.7);
-                robot.rightShooterMotor.setPower(.7);
-                fanctions.setTransportDown();
-                newState(state.STATE_WAIT_TWO);
-                break;
-
-            case STATE_WAIT_TWO:
-                if (stateTime.time() >= 2) {
-                    newState(state.STATE_SHOOT_PARTICLE_TWO);
-                }
-                break;
-
-            case STATE_SHOOT_PARTICLE_TWO:
-                fanctions.setTransportUp();
-                newState(state.STATE_WAIT_FIVE);
-
-                break;
-            //Moving transport ramp up to shoot ball.
-
-            case STATE_WAIT_FIVE:
-                if (stateTime.time() >= 1) {
-                    fanctions.setTransportDown();
-                    newState(state.STATE_TURN_OFF_SHOOTER);
-                }
-                break;
-            //Waiting half a second to move transport ramp back down.
-
-            case STATE_TURN_OFF_SHOOTER:
-                robot.leftShooterMotor.setPower(0);
-                robot.rightShooterMotor.setPower(0);
-                newState(state.STATE_MOVE_A_BIT);
-                break;
-            //Turning off shooter motors.
 
             case STATE_MOVE_A_BIT:
                 fanctions.setPos(-10, .9);
@@ -282,8 +192,69 @@ public class ShootAndSingleBeacon extends OpMode
                 if (stateTime.time() >= 1){
                     robot.leftMotor.setPower(0);
                     robot.rightMotor.setPower(0);
+                    newState(state.STATE_BACK_UP_BOI);
                 }
                 break;
+
+            case STATE_BACK_UP_BOI:
+                fanctions.setPos(-10, .9);
+                newState(state.STATE_TIMER_OPOP);
+                break;
+
+            case STATE_TIMER_OPOP:
+                if (stateTime.time() >= .75){
+                    robot.leftMotor.setPower(0);
+                    robot.rightMotor.setPower(0);
+                    fanctions.setDegrees(-90);
+                    newState(state.STATE_TURN_LEL);
+                }
+                break;
+
+            case STATE_TURN_LEL:
+                if (fanctions.PIDWithinTolerance()){
+                    fanctions.endmove();
+                    newState(state.STATE_FIND_WHITE_LINE_TWO);
+                }else{
+                    fanctions.turn(fanctions.PIDTurn());
+                }
+                break;
+
+            case STATE_FIND_WHITE_LINE_TWO:
+                if (robot.lineSensor.getLightDetected() >= .35){
+                    fanctions.setDegrees(90);
+                    newState(state.STATE_TURN_ON_WHITE_LINE_TWO);
+                }
+                break;
+
+            case STATE_TURN_ON_WHITE_LINE_TWO:
+                if (fanctions.PIDWithinTolerance()){
+                    fanctions.endmove();
+                    newState(state.STATE_CHOOSE_COLOR_TWO);
+                }else{
+                    fanctions.turn(fanctions.PIDTurn());
+                }
+                break;
+
+            case STATE_CHOOSE_COLOR_TWO:
+                if (sameCola()) {
+                    robot.ramServo.setPosition(1);
+                    newState(state.STATE_RAM_TWO);
+                } else {
+                    robot.ramServo.setPosition(0);
+                    newState(state.STATE_RAM_TWO);
+                }
+                break;
+
+            case STATE_RAM_TWO:
+                fanctions.setPos(6, 1);
+                newState(state.STATE_I_PROMISE_THIS_IS_THE_LAST_TIMER_INSERT_LENNY_HEHE_XD);
+                break;
+
+            case STATE_I_PROMISE_THIS_IS_THE_LAST_TIMER_INSERT_LENNY_HEHE_XD:
+                if (stateTime.time() >= 1){
+                    robot.leftMotor.setPower(0);
+                    robot.rightMotor.setPower(0);
+                }
         }
     }
 
