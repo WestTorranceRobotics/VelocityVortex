@@ -82,6 +82,7 @@ public class RobotHardware {
         gyro = hwMap.gyroSensor.get("gyro");
         teamSwitch = hwMap.digitalChannel.get("teamSwitch");
         lineSensor = hwMap.opticalDistanceSensor.get("lineSensor");
+        beaconSensor.enableLed(false);
 
 
         //Set the directions for each motor
