@@ -41,7 +41,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         STATE_WAIT_AGAIN,
     }
 
-    private boolean ifAutoIsRunning = false;
+    private boolean autoIsRunning = false;
 
     private state currentState = state.STATE_STANDBY;
 
@@ -116,7 +116,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         } else {
             intakeMotor.setPower(0);
         }
-        if (ifAutoIsRunning){
+        if (autoIsRunning){
             if (gamepad1.left_bumper){
                 newState(state.STATE_STANDBY);
             }
@@ -151,26 +151,26 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
                 leftShooterMotor.setPower(.8);
                 rightShooterMotor.setPower(.8);
                 transportServo1.setPosition(.4);
-                ifAutoIsRunning = true;
+                autoIsRunning = true;
                 newState(state.STATE_WAIT_FOR_SHOOTERS);
                 break;
 
             case STATE_WAIT_FOR_SHOOTERS:
-                ifAutoIsRunning = true;
+                autoIsRunning = true;
                 if (stateTime.time() >= 1.5) {
                     newState(state.STATE_LOAD_BALL);
                 }
                 break;
 
             case STATE_LOAD_BALL:
-                ifAutoIsRunning = true;
+                autoIsRunning = true;
                 transportServo1.setPosition(.275);
                 tunaCounter++;
                 newState(state.STATE_WAIT_FOR_BIG_SHOOT);
                 break;
 
             case STATE_WAIT_FOR_BIG_SHOOT:
-                ifAutoIsRunning = true;
+                autoIsRunning = true;
                 if(tunaCounter > 3) {
                     newState(state.STATE_STANDBY);
                 } else if (stateTime.time() >= 1.5) {
@@ -193,7 +193,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
                 rightShooterMotor.setPower(0);
                 transportServo1.setPosition(.4);
                 tunaCounter = 0;
-                ifAutoIsRunning = false;
+                autoIsRunning = false;
                 break;
         }
     }

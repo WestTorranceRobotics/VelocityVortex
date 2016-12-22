@@ -169,8 +169,8 @@ public class IterativeFunctions {
     public void anushalizeRobotHardware() {
         //robot.ramServo.setPosition(robot.ramServoMiddle);
         robot.transportServo.setPosition(robot.transport1Down);
-        robot.leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //TODO I would try to use this if I were you guys, just another step to take out, but you may have to tweak this function a little, use it for servos and stuff
     }
 
