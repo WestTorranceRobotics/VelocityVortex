@@ -16,20 +16,11 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime stateTime = new ElapsedTime();
 
-    //RobotHardware robot = new RobotHardware();
-   // IterativeFunctions fanctions = new IterativeFunctions(robot);
-
-    public DcMotor  leftMotor              = null;
-    public DcMotor  rightMotor             = null;
-    public DcMotor  intakeMotor            = null;
-    public DcMotor  leftShooterMotor       = null;
-    public DcMotor  rightShooterMotor      = null;
-    public ServoController servoController = null;
-    public Servo transportServo1           = null;
-    public Servo ramServo                  = null;
+    RobotHardware robot = new RobotHardware();
+    IterativeFunctions fanctions = new IterativeFunctions(robot);
 
     private boolean ramIsLeft = true;
-
+    private boolean autoIsRunning = false;
     private int tunaCounter = 0;
 
     private enum state {
@@ -41,36 +32,16 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         STATE_WAIT_AGAIN,
     }
 
-    private boolean ifAutoIsRunning = false;
-
     private state currentState = state.STATE_STANDBY;
 
     @Override
     public void init() {
-        //robot.initRobotHardware(hardwareMap);
-        leftMotor = hardwareMap.dcMotor.get("leftmotor");
-        rightMotor = hardwareMap.dcMotor.get("rightmotor");
-        intakeMotor = hardwareMap.dcMotor.get("inmotor");
-        leftShooterMotor = hardwareMap.dcMotor.get("LShootmotor");
-        rightShooterMotor = hardwareMap.dcMotor.get("RShootmotor");
-
-        transportServo1 = hardwareMap.servo.get("transervo1");
-        ramServo = hardwareMap.servo.get("ramservo");
-
-        leftMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightMotor.setDirection(DcMotor.Direction.FORWARD);
-        intakeMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightShooterMotor.setDirection(DcMotor.Direction.REVERSE);
-        leftShooterMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        servoController = hardwareMap.servoController.get("sv1");
+        robot.initRobotHardware(hardwareMap);
     }
 
     @Override
     public void init_loop() {
-        SetServo(.4);
-        ramServo.setPosition(0.15);
+        fanctions.anushalizeRobotHardware();
     }
 
     @Override
@@ -98,39 +69,35 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
 
         //driver1, left stick left motor
         if (Math.abs(gamepad1.left_stick_y) < .15) {
-            leftMotor.setPower(0);
+            robot.leftMotor.setPower(0);
         } else {
-            leftMotor.setPower(-gamepad1.left_stick_y);
+            robot.leftMotor.setPower(-gamepad1.left_stick_y);
         }
 
         //driver1, right stick right motor
         if (Math.abs(gamepad1.right_stick_y) < .15) {
-            rightMotor.setPower(0);
+            robot.rightMotor.setPower(0);
         } else {
-            rightMotor.setPower(-gamepad1.right_stick_y);
+            robot.rightMotor.setPower(-gamepad1.right_stick_y);
         }
 
         //driver1, right bumper -> intake in, left bumper -> intake out
         if(gamepad1.right_bumper) {
-            intakeMotor.setPower(1);
+            robot.intakeMotor.setPower(1);
         } else {
-            intakeMotor.setPower(0);
+            robot.intakeMotor.setPower(0);
         }
-        if (ifAutoIsRunning){
+        if (autoIsRunning){
             if (gamepad1.left_bumper){
                 newState(state.STATE_STANDBY);
             }
         }
-
-
 /*
         //if right bumper on driver2 is pressed then set shooters to 70%
         if(gamepad1.left_bumper) {
-            rightShooterMotor.setPower(.7);
-            leftShooterMotor.setPower(.7);
+            fanctions.setShooterSpeed(0.7);
         } else {
-            rightShooterMotor.setPower(0);
-            leftShooterMotor.setPower(0);
+            fanctions.setShooterSpeed(0);
         }
 */
         if(gamepad1.left_trigger > .2) {
@@ -140,41 +107,40 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         }
 
         if(ramIsLeft) {
-            ramServo.setPosition(.15);
+            fanctions.setRamServoLeft();
         } else {
-            ramServo.setPosition(1);
+            fanctions.setRamServoRight();
         }
 
         switch (currentState) {
 
             case STATE_SPOOL_UP_SHOOTERS:
-                leftShooterMotor.setPower(.8);
-                rightShooterMotor.setPower(.8);
-                transportServo1.setPosition(.4);
-                ifAutoIsRunning = true;
+                fanctions.setShooterSpeed(0.8);
+                fanctions.setTransportDown();
+                autoIsRunning = true;
                 newState(state.STATE_WAIT_FOR_SHOOTERS);
                 break;
 
             case STATE_WAIT_FOR_SHOOTERS:
-                ifAutoIsRunning = true;
+                autoIsRunning = true;
                 if (stateTime.time() >= 1.5) {
                     newState(state.STATE_LOAD_BALL);
                 }
                 break;
 
             case STATE_LOAD_BALL:
-                ifAutoIsRunning = true;
-                transportServo1.setPosition(.275);
+                autoIsRunning = true;
+                fanctions.setTransportUp();
                 tunaCounter++;
                 newState(state.STATE_WAIT_FOR_BIG_SHOOT);
                 break;
 
             case STATE_WAIT_FOR_BIG_SHOOT:
-                ifAutoIsRunning = true;
+                autoIsRunning = true;
                 if(tunaCounter > 3) {
                     newState(state.STATE_STANDBY);
                 } else if (stateTime.time() >= 1.5) {
-                    transportServo1.setPosition(0.4);
+                    fanctions.setTransportDown();
                     newState(state.STATE_WAIT_AGAIN);
                 }
                 break;
@@ -189,11 +155,10 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
                 if (gamepad1.left_bumper) {
                     newState(state.STATE_SPOOL_UP_SHOOTERS);
                 }
-                leftShooterMotor.setPower(0);
-                rightShooterMotor.setPower(0);
-                transportServo1.setPosition(.4);
+                fanctions.setShooterSpeed(0);
+                fanctions.setTransportDown();
                 tunaCounter = 0;
-                ifAutoIsRunning = false;
+                autoIsRunning = false;
                 break;
         }
     }
@@ -206,30 +171,4 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         currentState = newState;
         stateTime.reset();
     }
-
-    public double transport1Up = 0.25;
-    public double transport1Down = 0;
-
-    public void setTransport1Down(){
-        transportServo1.setPosition(transport1Down);
-    }
-
-    public boolean transportsAreDown (){
-        return transportServo1.getPosition() == transport1Down;
-    }
-
-    public boolean transportsAreUp (){
-        return currentPos <= transport1Up;
-    }
-
-    public void SetServo(double pos){
-        currentPos = pos;
-        transportServo1.setPosition(pos);
-    }
-
-    public boolean servoIsUp(){
-        return currentPos <= .25;
-    }
-
-    public double currentPos = 0;
 }

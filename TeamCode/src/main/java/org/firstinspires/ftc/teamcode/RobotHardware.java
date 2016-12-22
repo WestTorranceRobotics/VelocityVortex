@@ -17,9 +17,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/*
-  This is NOT an opmode.
- */
 public class RobotHardware {
 
     /* Constructor */
@@ -41,20 +38,15 @@ public class RobotHardware {
     //Sensors
     //public OpticalDistanceSensor lineSensor    = null;
     public ColorSensor beaconSensor              = null;
-    public I2cDeviceSynch beaconSensorReader   = null;
     public GyroSensor gyro                     = null;
     //public DigitalChannel teamSwitch           = null;//blue is true, red is false
 
-
-    HardwareMap hwMap           =  null;
-    private ElapsedTime period  = new ElapsedTime();
-
-    public ServoController servoController = null;
+    HardwareMap hwMap =  null;
 
     //Constants for servos
     public double ramServoRight        = 1;
-    public double ramServoLeft         = -1;
-    public double ramServoMiddle       = 0;
+    public double ramServoLeft         = 0.15;
+    public double ramServoMiddle       = 0.5;
     public double transport1Up         = .275;
     public double transport1Down       = .4;
     public double inchToTickConversion = 118.8356;
@@ -72,13 +64,11 @@ public class RobotHardware {
         rightShooterMotor = hwMap.dcMotor.get("RShootmotor");
 
         //Servos
-        //ramServo = hwMap.servo.get("ramServo");
+        ramServo = hwMap.servo.get("ramServo");
         transportServo = hwMap.servo.get("transervo1");
 
         //Sensors
         beaconSensor = hwMap.colorSensor.get("colorsensor");
-        //beaconSensorReader = new I2cDeviceSynchImpl(beaconSensor, I2cAddr.create8bit(0x3c), false);
-        //beaconSensorReader.engage();
         gyro = hwMap.gyroSensor.get("gyro");
         //teamSwitch = hwMap.digitalChannel.get("teamSwitch");
         //lineSensor = hwMap.opticalDistanceSensor.get("lineSensor");
