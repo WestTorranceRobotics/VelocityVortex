@@ -38,7 +38,11 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         STATE_WAIT_FOR_SHOOTERS,
         STATE_STANDBY,
         STATE_WAIT_FOR_BIG_SHOOT,
+        STATE_WAIT_AGAIN,
     }
+
+    private boolean ifAutoIsRunning = false;
+
 
     private shooterState currentShooterState = shooterState.STATE_STANDBY;
 
@@ -113,6 +117,13 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         } else {
             intakeMotor.setPower(0);
         }
+        if (ifAutoIsRunning){
+            if (gamepad1.left_bumper){
+                newShooterState(shooterState.STATE_STANDBY);
+            }
+        }
+
+
 /*
         //if right bumper on driver2 is pressed then set shooters to 70%
         if(gamepad1.left_bumper) {
@@ -141,6 +152,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
                 leftShooterMotor.setPower(.8);
                 rightShooterMotor.setPower(.8);
                 transportServo1.setPosition(.4);
+                ifAutoIsRunning = true;
                 if(gamepad1.left_bumper) {
                     newShooterState(shooterState.STATE_STANDBY);
                 }
@@ -148,6 +160,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
                 break;
 
             case STATE_WAIT_FOR_SHOOTERS:
+                ifAutoIsRunning = true;
                 if(gamepad1.left_bumper) {
                     newShooterState(shooterState.STATE_STANDBY);
                 } else if (shooterStateTime.time() >= 1.5) {
@@ -156,6 +169,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
                 break;
 
             case STATE_LOAD_BALL:
+                ifAutoIsRunning = true;
                 if(gamepad1.left_bumper) {
                     newShooterState(shooterState.STATE_STANDBY);
                 }
@@ -164,13 +178,21 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
                 newShooterState(shooterState.STATE_WAIT_FOR_BIG_SHOOT);
                 break;
             case STATE_WAIT_FOR_BIG_SHOOT:
+                ifAutoIsRunning = true;
                 if(gamepad1.left_bumper || tunaCounter > 3) {
                     newShooterState(shooterState.STATE_STANDBY);
                 } else if (shooterStateTime.time() >= 1.5) {
                     transportServo1.setPosition(0.4);
-                    newShooterState(shooterState.STATE_WAIT_FOR_SHOOTERS);
+                    newShooterState(shooterState.STATE_WAIT_AGAIN);
                 }
                 break;
+
+            case STATE_WAIT_AGAIN:
+                if (shooterStateTime.time() >= .25){
+                    newShooterState(shooterState.STATE_LOAD_BALL);
+                }
+                break;
+
 
             case STATE_STANDBY:
                 if (gamepad1.left_bumper) {
@@ -180,6 +202,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
                 rightShooterMotor.setPower(0);
                 transportServo1.setPosition(.4);
                 tunaCounter = 0;
+                ifAutoIsRunning = false;
                 break;
         }
 
