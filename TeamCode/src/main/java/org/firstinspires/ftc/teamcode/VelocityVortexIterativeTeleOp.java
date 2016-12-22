@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class VelocityVortexIterativeTeleOp extends OpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime shooterStateTime = new ElapsedTime();
 
     //RobotHardware robot = new RobotHardware();
    // IterativeFunctions fanctions = new IterativeFunctions(robot);
@@ -28,6 +29,18 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
     public Servo ramServo                  = null;
 
     private boolean ramIsLeft = true;
+
+    private int tunaCounter = 0;
+
+    private enum shooterState {
+        STATE_SPOOL_UP_SHOOTERS,
+        STATE_LOAD_BALL,
+        STATE_WAIT_FOR_SHOOTERS,
+        STATE_STANDBY,
+        STATE_WAIT_FOR_BIG_SHOOT,
+    }
+
+    private shooterState currentShooterState = shooterState.STATE_STANDBY;
 
     @Override
     public void init() {
@@ -64,14 +77,14 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
 
     @Override
     public void loop() {
-
+/*
         //Driver2, a -> transport up, if not then down
         if(gamepad1.a){
             SetServo(.275);
         } if(!gamepad1.a) {
             SetServo(0.4);
         }
-
+*/
         /*slow moving code
         if(!transportsAreUp() && gamepad2.a){
             SetServo(currentPos - .001);
@@ -100,7 +113,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         } else {
             intakeMotor.setPower(0);
         }
-
+/*
         //if right bumper on driver2 is pressed then set shooters to 70%
         if(gamepad1.left_bumper) {
             rightShooterMotor.setPower(.7);
@@ -109,7 +122,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
             rightShooterMotor.setPower(0);
             leftShooterMotor.setPower(0);
         }
-
+*/
         if(gamepad1.left_trigger > .2) {
             ramIsLeft = true;
         } else if (gamepad1.right_trigger > .2) {
@@ -121,11 +134,66 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         } else {
             ramServo.setPosition(1);
         }
+
+        switch (currentShooterState) {
+
+            case STATE_SPOOL_UP_SHOOTERS:
+                leftShooterMotor.setPower(.8);
+                rightShooterMotor.setPower(.8);
+                transportServo1.setPosition(.4);
+                if(gamepad1.left_bumper) {
+                    newShooterState(shooterState.STATE_STANDBY);
+                }
+                newShooterState(shooterState.STATE_WAIT_FOR_SHOOTERS);
+                break;
+
+            case STATE_WAIT_FOR_SHOOTERS:
+                if(gamepad1.left_bumper) {
+                    newShooterState(shooterState.STATE_STANDBY);
+                } else if (shooterStateTime.time() >= 1.5) {
+                    newShooterState(shooterState.STATE_LOAD_BALL);
+                }
+                break;
+
+            case STATE_LOAD_BALL:
+                if(gamepad1.left_bumper) {
+                    newShooterState(shooterState.STATE_STANDBY);
+                }
+                transportServo1.setPosition(.275);
+                tunaCounter++;
+                newShooterState(shooterState.STATE_WAIT_FOR_BIG_SHOOT);
+                break;
+            case STATE_WAIT_FOR_BIG_SHOOT:
+                if(gamepad1.left_bumper || tunaCounter > 3) {
+                    newShooterState(shooterState.STATE_STANDBY);
+                } else if (shooterStateTime.time() >= 1.5) {
+                    transportServo1.setPosition(0.4);
+                    newShooterState(shooterState.STATE_WAIT_FOR_SHOOTERS);
+                }
+                break;
+
+            case STATE_STANDBY:
+                if (gamepad1.left_bumper) {
+                    newShooterState(shooterState.STATE_SPOOL_UP_SHOOTERS);
+                }
+                leftShooterMotor.setPower(0);
+                rightShooterMotor.setPower(0);
+                transportServo1.setPosition(.4);
+                tunaCounter = 0;
+                break;
+        }
+
     }
 
     @Override
     public void stop() {
     }
+
+    public void newShooterState(shooterState newState) {
+        currentShooterState = newState;
+        shooterStateTime.reset();
+    }
+
 
     public double transport1Up = 0.25;
     public double transport1Down = 0;
