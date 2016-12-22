@@ -97,8 +97,6 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         //driver1, right bumper -> intake in, left bumper -> intake out
         if(gamepad1.right_bumper) {
             intakeMotor.setPower(1);
-        } else if(gamepad1.left_bumper) {
-            intakeMotor.setPower(-1);
         } else {
             intakeMotor.setPower(0);
         }
