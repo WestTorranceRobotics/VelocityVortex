@@ -9,12 +9,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="TeleOp", group="WTR")  // @Autonomous(...) is the other common choice
+@TeleOp(name="TeleOp", group="WTR")
 //@Disabled
 public class VelocityVortexIterativeTeleOp extends OpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-    private ElapsedTime shooterStateTime = new ElapsedTime();
+    private ElapsedTime stateTime = new ElapsedTime();
 
     //RobotHardware robot = new RobotHardware();
    // IterativeFunctions fanctions = new IterativeFunctions(robot);
@@ -32,7 +32,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
 
     private int tunaCounter = 0;
 
-    private enum shooterState {
+    private enum state {
         STATE_SPOOL_UP_SHOOTERS,
         STATE_LOAD_BALL,
         STATE_WAIT_FOR_SHOOTERS,
@@ -43,8 +43,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
 
     private boolean ifAutoIsRunning = false;
 
-
-    private shooterState currentShooterState = shooterState.STATE_STANDBY;
+    private state currentState = state.STATE_STANDBY;
 
     @Override
     public void init() {
@@ -119,7 +118,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         }
         if (ifAutoIsRunning){
             if (gamepad1.left_bumper){
-                newShooterState(shooterState.STATE_STANDBY);
+                newState(state.STATE_STANDBY);
             }
         }
 
@@ -146,57 +145,49 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
             ramServo.setPosition(1);
         }
 
-        switch (currentShooterState) {
+        switch (currentState) {
 
             case STATE_SPOOL_UP_SHOOTERS:
                 leftShooterMotor.setPower(.8);
                 rightShooterMotor.setPower(.8);
                 transportServo1.setPosition(.4);
                 ifAutoIsRunning = true;
-                if(gamepad1.left_bumper) {
-                    newShooterState(shooterState.STATE_STANDBY);
-                }
-                newShooterState(shooterState.STATE_WAIT_FOR_SHOOTERS);
+                newState(state.STATE_WAIT_FOR_SHOOTERS);
                 break;
 
             case STATE_WAIT_FOR_SHOOTERS:
                 ifAutoIsRunning = true;
-                if(gamepad1.left_bumper) {
-                    newShooterState(shooterState.STATE_STANDBY);
-                } else if (shooterStateTime.time() >= 1.5) {
-                    newShooterState(shooterState.STATE_LOAD_BALL);
+                if (stateTime.time() >= 1.5) {
+                    newState(state.STATE_LOAD_BALL);
                 }
                 break;
 
             case STATE_LOAD_BALL:
                 ifAutoIsRunning = true;
-                if(gamepad1.left_bumper) {
-                    newShooterState(shooterState.STATE_STANDBY);
-                }
                 transportServo1.setPosition(.275);
                 tunaCounter++;
-                newShooterState(shooterState.STATE_WAIT_FOR_BIG_SHOOT);
+                newState(state.STATE_WAIT_FOR_BIG_SHOOT);
                 break;
+
             case STATE_WAIT_FOR_BIG_SHOOT:
                 ifAutoIsRunning = true;
-                if(gamepad1.left_bumper || tunaCounter > 3) {
-                    newShooterState(shooterState.STATE_STANDBY);
-                } else if (shooterStateTime.time() >= 1.5) {
+                if(tunaCounter > 3) {
+                    newState(state.STATE_STANDBY);
+                } else if (stateTime.time() >= 1.5) {
                     transportServo1.setPosition(0.4);
-                    newShooterState(shooterState.STATE_WAIT_AGAIN);
+                    newState(state.STATE_WAIT_AGAIN);
                 }
                 break;
 
             case STATE_WAIT_AGAIN:
-                if (shooterStateTime.time() >= .25){
-                    newShooterState(shooterState.STATE_LOAD_BALL);
+                if (stateTime.time() >= .25){
+                    newState(state.STATE_LOAD_BALL);
                 }
                 break;
 
-
             case STATE_STANDBY:
                 if (gamepad1.left_bumper) {
-                    newShooterState(shooterState.STATE_SPOOL_UP_SHOOTERS);
+                    newState(state.STATE_SPOOL_UP_SHOOTERS);
                 }
                 leftShooterMotor.setPower(0);
                 rightShooterMotor.setPower(0);
@@ -205,18 +196,16 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
                 ifAutoIsRunning = false;
                 break;
         }
-
     }
 
     @Override
     public void stop() {
     }
 
-    public void newShooterState(shooterState newState) {
-        currentShooterState = newState;
-        shooterStateTime.reset();
+    public void newState(state newState) {
+        currentState = newState;
+        stateTime.reset();
     }
-
 
     public double transport1Up = 0.25;
     public double transport1Down = 0;
@@ -237,6 +226,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         currentPos = pos;
         transportServo1.setPosition(pos);
     }
+
     public boolean servoIsUp(){
         return currentPos <= .25;
     }
