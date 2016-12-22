@@ -46,6 +46,10 @@ public class ShootAndSingleBeacon extends OpMode
     RobotHardware robot = new RobotHardware();
     IterativeFunctions fanctions = new IterativeFunctions(robot);
 
+    boolean isPressed = false;
+    boolean isRed = true;
+    boolean beaconIsRed = false;
+
     private enum state {
         STATE_SPOOL_UP_SHOOTERS,
         STATE_WAIT,
@@ -204,7 +208,46 @@ public class ShootAndSingleBeacon extends OpMode
                 }
                 break;
 
-            case
+            case STATE_MOVE_A_LOT:
+                fanctions.setPos(60, .9);
+                newState(state.STATE_TIMER_TWO);
+                break;
+
+            case STATE_TIMER_TWO:
+                if (stateTime.time() >= 3.5){
+                    fanctions.setDegrees(-45);
+                    newState(state.STATE_TURN_AGAIN);
+                }
+                break;
+
+            case STATE_TURN_AGAIN:
+                if (fanctions.PIDWithinTolerance()){
+                    fanctions.endmove();
+                    newState(state.STATE_FIND_WHITE_LINE);
+                }else{
+                    fanctions.turn(fanctions.PIDTurn());
+                }
+                break;
+
+            case STATE_FIND_WHITE_LINE:
+                if (robot.lineSensor.getLightDetected() >= .35){
+                    fanctions.setDegrees(90);
+                    newState(state.STATE_TURN_ON_WHITE_LINE);
+                }
+                break;
+
+            case STATE_TURN_ON_WHITE_LINE:
+                if (fanctions.PIDWithinTolerance()){
+                    fanctions.endmove();
+                    newState(state.STATE_CHOOSE_COLOR);
+                }else{
+                    fanctions.turn(fanctions.PIDTurn());
+                }
+                break;
+
+            case STATE_CHOOSE_COLOR:
+
+
 
         }
 
@@ -217,5 +260,15 @@ public class ShootAndSingleBeacon extends OpMode
     private void newState(state newState) {
         currentState = newState;
         stateTime.reset();
+    }
+
+    public boolean sameCola(){
+        if(beaconIsRed && isRed) {
+            return true;
+        } else if (!beaconIsRed && !isRed) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
