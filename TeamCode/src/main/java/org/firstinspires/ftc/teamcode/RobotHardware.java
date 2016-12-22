@@ -39,11 +39,11 @@ public class RobotHardware {
     public Servo transportServo = null;
 
     //Sensors
-    public OpticalDistanceSensor lineSensor    = null;
+    //public OpticalDistanceSensor lineSensor    = null;
     public ColorSensor beaconSensor              = null;
     public I2cDeviceSynch beaconSensorReader   = null;
     public GyroSensor gyro                     = null;
-    public DigitalChannel teamSwitch           = null;//blue is true, red is false
+    //public DigitalChannel teamSwitch           = null;//blue is true, red is false
 
 
     HardwareMap hwMap           =  null;
@@ -80,8 +80,8 @@ public class RobotHardware {
         //beaconSensorReader = new I2cDeviceSynchImpl(beaconSensor, I2cAddr.create8bit(0x3c), false);
         //beaconSensorReader.engage();
         gyro = hwMap.gyroSensor.get("gyro");
-        teamSwitch = hwMap.digitalChannel.get("teamSwitch");
-        lineSensor = hwMap.opticalDistanceSensor.get("lineSensor");
+        //teamSwitch = hwMap.digitalChannel.get("teamSwitch");
+        //lineSensor = hwMap.opticalDistanceSensor.get("lineSensor");
 
 
         //Set the directions for each motor

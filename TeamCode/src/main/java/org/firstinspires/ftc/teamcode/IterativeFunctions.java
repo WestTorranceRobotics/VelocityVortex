@@ -143,14 +143,14 @@ public class IterativeFunctions {
 
 
 
-    public boolean sameCola(){
+    /*public boolean sameCola(){
         if(robot.teamSwitch.getState() == beaconIsRed) {
             return true;
         } else {
             return false;
 
         }
-    }
+    }*/
 
     public void tankDrive(double left, double right) {
         if (Math.abs(left) < .15) {
@@ -205,11 +205,11 @@ public class IterativeFunctions {
     public boolean transportIsUp (){
         return robot.transportServo.getPosition() == robot.transport1Up;
     }
-    public int teamNumber () {
+    /*public int teamNumber () {
         if (robot.teamSwitch.getState()) {
             return 1;
         } else {
             return -1;
         }
-    }
+    }*/
 }

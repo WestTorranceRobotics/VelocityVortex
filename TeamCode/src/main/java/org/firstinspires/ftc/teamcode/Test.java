@@ -60,7 +60,6 @@ public class Test extends OpMode
         robot.initRobotHardware(hardwareMap);
         //TODO add telemetry that tells the driver the gyro is not yet calibrated, something like telemetry.addData("GYRO", "CALIBRATING: DO NOT START!");
         robot.gyro.calibrate();
-        robot.rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         //TODO add telemetry here that will update the last telemetry to let the driver know the gyro is done calibrating, something like telemetry.addData("GYRO", "CALIBRATION COMPLETE!");
     }
 
@@ -73,6 +72,8 @@ public class Test extends OpMode
     @Override
     public void start() {
         runtime.reset();
+        robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //newState(state.STATE_MOVE);
         //fanctions.setPos(24,.6);
     }
