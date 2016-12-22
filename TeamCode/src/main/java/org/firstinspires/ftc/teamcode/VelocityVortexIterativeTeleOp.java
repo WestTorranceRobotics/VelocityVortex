@@ -27,6 +27,8 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
     public Servo transportServo1           = null;
     public Servo ramServo                  = null;
 
+    private boolean ramIsLeft = true;
+
     @Override
     public void init() {
         //robot.initRobotHardware(hardwareMap);
@@ -63,13 +65,10 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
     @Override
     public void loop() {
 
-        telemetry.addData("1", transportServo1.getPortNumber());
-        //telemetry.addData("2", transportServo2.getPortNumber());
-
         //Driver2, a -> transport up, if not then down
-        if(gamepad2.a){
+        if(gamepad1.a){
             SetServo(.275);
-        } if(!gamepad2.a) {
+        } if(!gamepad1.a) {
             SetServo(0.4);
         }
 
@@ -99,13 +98,13 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         if(gamepad1.right_bumper) {
             intakeMotor.setPower(1);
         } else if(gamepad1.left_bumper) {
-            intakeMotor.setPower(-.6);
+            intakeMotor.setPower(-1);
         } else {
             intakeMotor.setPower(0);
         }
 
         //if right bumper on driver2 is pressed then set shooters to 70%
-        if(gamepad2.right_bumper) {
+        if(gamepad1.left_bumper) {
             rightShooterMotor.setPower(.7);
             leftShooterMotor.setPower(.7);
         } else {
@@ -113,11 +112,15 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
             leftShooterMotor.setPower(0);
         }
 
-        if(gamepad2.b) {
-            ramServo.setPosition(0);
+        if(gamepad1.left_trigger > .2) {
+            ramIsLeft = true;
+        } else if (gamepad1.right_trigger > .2) {
+            ramIsLeft = false;
         }
 
-        if (gamepad2.x) {
+        if(ramIsLeft) {
+            ramServo.setPosition(.15);
+        } else {
             ramServo.setPosition(1);
         }
     }
@@ -151,6 +154,3 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
 
     public double currentPos = 0;
 }
-
-
-
