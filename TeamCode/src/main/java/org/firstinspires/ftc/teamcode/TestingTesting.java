@@ -29,7 +29,9 @@ public class TestingTesting extends OpMode {
         beaconSensor = hardwareMap.colorSensor.get("colorsensor");
         ramServo = hardwareMap.servo.get("ramservo");
         servoController = hardwareMap.servoController.get("sv1");
-        beaconSensor.enableLed(false); } @Override public void init_loop() { ramServo.setPosition(.5);
+        beaconSensor.enableLed(false); }
+
+    @Override public void init_loop() { ramServo.setPosition(.5);
         transportservo1.setPosition(.4);
         telemetry.addData("red", beaconSensor.red());
         telemetry.addData("blue", beaconSensor.blue());

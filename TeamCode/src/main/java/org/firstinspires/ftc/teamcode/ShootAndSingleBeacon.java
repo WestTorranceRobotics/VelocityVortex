@@ -73,6 +73,7 @@ public class ShootAndSingleBeacon extends OpMode
         STATE_TURN_ON_WHITE_LINE,
         STATE_CHOOSE_COLOR,
         STATE_RAM,
+        STATE_LAST_TIMER_LEL_HEHE_XD
     }
     private state currentState = null;
 
@@ -99,6 +100,19 @@ public class ShootAndSingleBeacon extends OpMode
         telemetry.addData("state", currentState);
         telemetry.addData("Len", robot.leftMotor.getCurrentPosition());
         telemetry.addData("Ren", robot.rightMotor.getCurrentPosition());
+
+        if(robot.beaconSensor.blue()>robot.beaconSensor.red()) {
+            beaconIsRed = false;
+        } else {
+            beaconIsRed = true;
+        }
+
+        if(gamepad1.a && !isPressed){
+            isRed = !isRed; isPressed = true;
+        } else if(!gamepad1.a){
+            isPressed = false;
+        }
+
         switch (currentState) {
 
             case STATE_SPOOL_UP_SHOOTERS:
@@ -194,6 +208,8 @@ public class ShootAndSingleBeacon extends OpMode
 
             case STATE_TIMER:
                 if (stateTime.time() >= 1){
+                    robot.leftMotor.setPower(0);
+                    robot.rightMotor.setPower(0);
                     fanctions.setDegrees(-135);
                     newState(state.STATE_TURN);
                 }
@@ -215,6 +231,8 @@ public class ShootAndSingleBeacon extends OpMode
 
             case STATE_TIMER_TWO:
                 if (stateTime.time() >= 3.5){
+                    robot.leftMotor.setPower(0);
+                    robot.rightMotor.setPower(0);
                     fanctions.setDegrees(-45);
                     newState(state.STATE_TURN_AGAIN);
                 }
@@ -246,9 +264,26 @@ public class ShootAndSingleBeacon extends OpMode
                 break;
 
             case STATE_CHOOSE_COLOR:
+                if (sameCola()) {
+                    robot.ramServo.setPosition(1);
+                    newState(state.STATE_RAM);
+                } else {
+                    robot.ramServo.setPosition(0);
+                    newState(state.STATE_RAM);
+                }
+                break;
 
+            case STATE_RAM:
+                fanctions.setPos(6, 1);
+                newState(state.STATE_LAST_TIMER_LEL_HEHE_XD);
+                break;
 
-
+            case STATE_LAST_TIMER_LEL_HEHE_XD:
+                if (stateTime.time() >= 1){
+                    robot.leftMotor.setPower(0);
+                    robot.rightMotor.setPower(0);
+                }
+                break;
         }
 
     }
