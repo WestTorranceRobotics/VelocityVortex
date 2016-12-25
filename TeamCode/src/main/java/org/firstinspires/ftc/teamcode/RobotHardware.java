@@ -39,11 +39,11 @@ public class RobotHardware {
     public Servo transportServo = null;
 
     //Sensors
-    //public OpticalDistanceSensor lineSensor    = null;
+    public OpticalDistanceSensor lineSensor    = null;
     public ColorSensor beaconSensor              = null;
     public I2cDeviceSynch beaconSensorReader   = null;
     public GyroSensor gyro                     = null;
-    //public DigitalChannel teamSwitch           = null;//blue is true, red is false
+    public DigitalChannel teamSwitch           = null;//blue is false, red is true
 
 
     HardwareMap hwMap           =  null;
