@@ -117,18 +117,12 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         } else {
             intakeMotor.setPower(0);
         }
-<<<<<<< Updated upstream
-        if (autoIsRunning){
+
+        if (autoIsRunning && !leftBumperPressed){
             if (gamepad1.left_bumper){
                 newState(state.STATE_STANDBY);
-=======
-
-
-        if (ifAutoIsRunning && !leftBumperPressed){
-            if (gamepad1.left_bumper){
-                newShooterState(shooterState.STATE_STANDBY);
                 leftBumperPressed = true;
->>>>>>> Stashed changes
+
             }
         } else if (!gamepad1.left_bumper) {
             leftBumperPressed = false;
