@@ -210,6 +210,7 @@ public class ShootAndParkInCenter extends OpMode {
 
     public void stop() {
     }
+
     private void newState(state newState) {
         // Reset the state time, and then change to next state. 
         stateTime.reset();
