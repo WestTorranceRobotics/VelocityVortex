@@ -47,6 +47,10 @@ public class ShooterSpeedControl extends OpMode
 
     RobotHardware robot = new RobotHardware();
     IterativeFunctions fanctions = new IterativeFunctions(robot);
+    double lInitTime = 0;
+    double lInitTick = 0;
+    double rInitTime = 0;
+    double rInitTick = 0;
 
     private enum state {
         STATE_SPOOL_UP,
@@ -61,6 +65,9 @@ public class ShooterSpeedControl extends OpMode
 
     double lencoderRate = 0;
     double rencoderRate = 0;
+
+    double lerrorsum = 0;
+    double rerrorsum = 0;
 
     int linitial = 0;
     int rinitial = 0;
@@ -129,6 +136,7 @@ public class ShooterSpeedControl extends OpMode
 
             case STATE_IMITATE:
 
+
                 break;
         }
 
@@ -143,4 +151,37 @@ public class ShooterSpeedControl extends OpMode
         statetime.reset();
     }
 
+    public double lCurrentRate(){
+        double timeChange = runtime.time() - lInitTime;
+        double distanceChange = robot.leftMotor.getCurrentPosition() - lInitTick;
+        double rate = distanceChange / timeChange;
+        lInitTime = runtime.time();
+        lInitTick = robot.leftMotor.getCurrentPosition();
+        return rate;
+
+    }
+
+    public double rCurrentRate(){
+        double timeChange = runtime.time() - rInitTime;
+        double distanceChange = robot.rightMotor.getCurrentPosition() - rInitTick;
+        double rate = distanceChange / timeChange;
+        rInitTime = runtime.time();
+        rInitTick = robot.rightMotor.getCurrentPosition();
+        return rate;
+
+    }
+
+    public double lShooterPID(){
+        double error = lencoderRate - lCurrentRate();
+        lerrorsum += error;
+
+        return(0 * error) + (0 * lerrorsum);
+    }
+
+    public double rShooterPID(){
+        double error = rencoderRate - rCurrentRate();
+        rerrorsum += error;
+
+        return(0 * error) + (0 * rerrorsum);
+    }
 }
