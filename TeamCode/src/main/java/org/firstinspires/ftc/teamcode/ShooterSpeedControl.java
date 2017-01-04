@@ -38,7 +38,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Iterative Auto", group="WTR")  // @Autonomous(...) is the other common choice
+@Autonomous(name="ShooterSpeedControl", group="WTR")  // @Autonomous(...) is the other common choice
 //@Disabled
 public class ShooterSpeedControl extends OpMode
 {
@@ -97,6 +97,7 @@ public class ShooterSpeedControl extends OpMode
 
     @Override
     public void loop() {
+        telemetry.addData("state", currentState + " " + statetime.time());
 
         switch (currentState) {
 
@@ -135,8 +136,9 @@ public class ShooterSpeedControl extends OpMode
                 break;
 
             case STATE_IMITATE:
-
-
+                robot.leftShooterMotor.setPower(lShooterPID());
+                robot.rightShooterMotor.setPower(rShooterPID());
+                telemetry.addData("target", lencoderRate + " " + rencoderRate);
                 break;
         }
 
@@ -157,6 +159,7 @@ public class ShooterSpeedControl extends OpMode
         double rate = distanceChange / timeChange;
         lInitTime = runtime.time();
         lInitTick = robot.leftMotor.getCurrentPosition();
+        telemetry.addData("leftRate", rate);
         return rate;
 
     }
@@ -167,6 +170,7 @@ public class ShooterSpeedControl extends OpMode
         double rate = distanceChange / timeChange;
         rInitTime = runtime.time();
         rInitTick = robot.rightMotor.getCurrentPosition();
+        telemetry.addData("rightRate", rate);
         return rate;
 
     }
@@ -175,13 +179,13 @@ public class ShooterSpeedControl extends OpMode
         double error = lencoderRate - lCurrentRate();
         lerrorsum += error;
 
-        return(0 * error) + (0 * lerrorsum);
+        return(.01 * error) + (0 * lerrorsum);
     }
 
     public double rShooterPID(){
         double error = rencoderRate - rCurrentRate();
         rerrorsum += error;
 
-        return(0 * error) + (0 * rerrorsum);
+        return(.01 * error) + (0 * rerrorsum);
     }
 }

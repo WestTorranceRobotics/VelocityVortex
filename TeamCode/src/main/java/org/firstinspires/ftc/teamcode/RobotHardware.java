@@ -72,13 +72,11 @@ public class RobotHardware {
         rightShooterMotor = hwMap.dcMotor.get("RShootmotor");
 
         //Servos
-        //ramServo = hwMap.servo.get("ramServo");
+        ramServo = hwMap.servo.get("ramservo");
         transportServo = hwMap.servo.get("transervo1");
 
         //Sensors
         beaconSensor = hwMap.colorSensor.get("colorsensor");
-        //beaconSensorReader = new I2cDeviceSynchImpl(beaconSensor, I2cAddr.create8bit(0x3c), false);
-        //beaconSensorReader.engage();
         gyro = hwMap.gyroSensor.get("gyro");
         //teamSwitch = hwMap.digitalChannel.get("teamSwitch");
         //lineSensor = hwMap.opticalDistanceSensor.get("lineSensor");

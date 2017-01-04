@@ -87,6 +87,7 @@ public class ShootAndSingleBeacon extends OpMode
     @Override
     public void init_loop() {
     robot.ramServo.setPosition(0);
+    robot.transportServo.setPosition(.4);
     }
 
     @Override

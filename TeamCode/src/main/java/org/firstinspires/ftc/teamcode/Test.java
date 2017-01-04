@@ -88,9 +88,9 @@ public class Test extends OpMode
         telemetry.addData("degrees", (Math.abs(robot.gyro.getHeading()-fanctions.initheading)));
         //TODO add a shit ton of telemetry for when you test, anything you can think of that might be usefull, degrees, ticks, inches etc. it helps a lot
 
-       /* switch (currrentState) {
+        /*switch (currrentState) {
             case STATE_MOVE:
-                if (fanctions.doneDriving()) {
+               /* if (fanctions.doneDriving()) {
                     fanctions.endmove();
                     newState(state.STATE_END);
                 }
