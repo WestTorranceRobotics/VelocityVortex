@@ -40,6 +40,8 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         STATE_STANDBY,
         STATE_WAIT_FOR_BIG_SHOOT,
         STATE_WAIT_AGAIN,
+        STATE_TURN_OFF_SHOOTERS,
+        STATE_LUL,
     }
 
     private boolean autoIsRunning = false;
@@ -81,21 +83,21 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
 
     @Override
     public void loop() {
-/*
+
         //Driver2, a -> transport up, if not then down
-        if(gamepad1.a){
+        if(gamepad2.a){
             SetServo(.275);
-        } if(!gamepad1.a) {
+        } if(!gamepad2.a) {
             SetServo(0.4);
         }
-*/
-        /*slow moving code
+
+        /*//slow moving code
         if(!transportsAreUp() && gamepad2.a){
             SetServo(currentPos - .001);
         } if(!gamepad2.a) {
             SetServo(0.5);
-        }
-        */
+        }*/
+
 
         //driver1, left stick left motor
         if (Math.abs(gamepad1.left_stick_y) < .15) {
@@ -114,31 +116,38 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
         //driver1, right bumper -> intake in, left bumper -> intake out
         if(gamepad1.right_bumper) {
             intakeMotor.setPower(1);
-        } else {
+        }
+
+        if (gamepad1.left_bumper && !gamepad1.right_bumper){
+            intakeMotor.setPower(-1);
+        }
+
+        if (!gamepad1.left_bumper && !gamepad1.right_bumper){
             intakeMotor.setPower(0);
         }
 
-        if (autoIsRunning && !leftBumperPressed){
-            if (gamepad1.left_bumper){
+
+        /*if (autoIsRunning && !leftBumperPressed){
+                if (gamepad1.left_bumper){
                 newState(state.STATE_STANDBY);
                 leftBumperPressed = true;
 
             }
         } else if (!gamepad1.left_bumper) {
             leftBumperPressed = false;
-        }
+        }*/
 
 
-/*
+
         //if right bumper on driver2 is pressed then set shooters to 70%
-        if(gamepad1.left_bumper) {
-            rightShooterMotor.setPower(.7);
-            leftShooterMotor.setPower(.7);
+        if(gamepad2.right_bumper) {
+            rightShooterMotor.setPower(.8);
+            leftShooterMotor.setPower(.8);
         } else {
             rightShooterMotor.setPower(0);
             leftShooterMotor.setPower(0);
         }
-*/
+
         if(gamepad1.left_trigger > .2) {
             ramIsLeft = true;
         } else if (gamepad1.right_trigger > .2) {
@@ -151,7 +160,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
             ramServo.setPosition(1);
         }
 
-        switch (currentState) {
+        /*switch (currentState) {
 
             case STATE_SPOOL_UP_SHOOTERS:
                 leftShooterMotor.setPower(.8);
@@ -192,7 +201,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
                 break;
 
             case STATE_STANDBY:
-                if (gamepad1.left_bumper) {
+                if (gamepad2.left_bumper) {
                     newState(state.STATE_SPOOL_UP_SHOOTERS);
                 }
                 leftShooterMotor.setPower(0);
@@ -201,7 +210,7 @@ public class VelocityVortexIterativeTeleOp extends OpMode {
                 tunaCounter = 0;
                 autoIsRunning = false;
                 break;
-        }
+        }*/
     }
 
     @Override

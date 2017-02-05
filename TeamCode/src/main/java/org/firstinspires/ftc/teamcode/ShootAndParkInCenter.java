@@ -97,12 +97,12 @@ public class ShootAndParkInCenter extends OpMode {
         switch (currentState) {
 
             case STATE_SPOOL_UP_SHOOTERS:
-                if (leftShooterMotor.getPower() >= .8 && rightShooterMotor.getPower() >= .8){
+                if (leftShooterMotor.getPower() >= .9 && rightShooterMotor.getPower() >= .9) {
                     SetServo(.40);
                     newState(state.STATE_DRIVE_TO_VORTEX);
-                }else{
-                    leftShooterMotor.setPower(.8);
-                    rightShooterMotor.setPower(.8);
+                } else {
+                    leftShooterMotor.setPower(.9);
+                    rightShooterMotor.setPower(.9);
                 }
                 break;
             //Rev these shooters.
@@ -116,18 +116,18 @@ public class ShootAndParkInCenter extends OpMode {
                 if (stateTime.time() >= 1) {
                     newState(state.STATE_UP);
                 }
-                break;
-            //Waiting for shooters to get power.
+                    break;
+                    //Waiting for shooters to get power.
 
             case STATE_UP:
                 SetServo(.275);
                 newState(state.STATE_WAIT);
 
                 break;
-            //Moving transport ramp up to shoot ball.
+                    //Moving transport ramp up to shoot ball.
 
             case STATE_WAIT:
-                if (stateTime.time() >= 2) {
+                if (stateTime.time() >= 1.5) {
                     leftShooterMotor.setPower(0);
                     rightShooterMotor.setPower(0);
                     newState(state.STATE_WAIT_FOR_SHOOT);
@@ -135,32 +135,34 @@ public class ShootAndParkInCenter extends OpMode {
                 break;
 
             case STATE_WAIT_FOR_SHOOT:
-                if (stateTime.time() >= 2.5){
+                if (stateTime.time() >= 2) {
                     SetServo(.4);
                     newState(state.STATE_WAIT_MORE);
                 }
                 break;
 
             case STATE_WAIT_MORE:
-                if (stateTime.time() >= 0){
-                    leftShooterMotor.setPower(.7);
-                    rightShooterMotor.setPower(.7);
+                if (stateTime.time() >= 1.5) {
+                    leftShooterMotor.setPower(.8);
+                    rightShooterMotor.setPower(.8);
                     newState(state.STATE_WAIT_FOURTH);
                 }
                 break;
-            //Rev these shooters.
+                    //Rev these shooters.
 
             case STATE_WAIT_FOURTH:
-                if (stateTime.time() >= 1.5){
-                    newState(state.STATE_WAIT_FOURTH);
+                if (stateTime.time() >= 0) {
+                    newState(state.STATE_SPECIAL_SNOWFLAKE);
                 }
+                break;
+
             case STATE_SPECIAL_SNOWFLAKE:
-                if (leftShooterMotor.getPower() >= .7 && rightShooterMotor.getPower() >= .7){
+                if (leftShooterMotor.getPower() >= .8 && rightShooterMotor.getPower() >= .8) {
                     SetServo(.40);
                     newState(state.STATE_WAIT_THRID);
-                }else{
-                    leftShooterMotor.setPower(.7);
-                    rightShooterMotor.setPower(.7);
+                } else {
+                    leftShooterMotor.setPower(.8);
+                    rightShooterMotor.setPower(.8);
                 }
                 break;
 
@@ -171,12 +173,11 @@ public class ShootAndParkInCenter extends OpMode {
                 break;
 
             case STATE_UP2:
-                SetServo(.275
-                );
+                SetServo(.275);
                 newState(state.STATE_WAIT2);
 
                 break;
-            //Moving transport ramp up to shoot ball.
+                    //Moving transport ramp up to shoot ball.
 
             case STATE_WAIT2:
                 if (stateTime.time() >= 1) {
@@ -184,14 +185,14 @@ public class ShootAndParkInCenter extends OpMode {
                     newState(state.STATE_SHUT_OFF_SHOOTERS);
                 }
                 break;
-            //Waiting half a second to move transport ramp back down.
+                    //Waiting half a second to move transport ramp back down.
 
             case STATE_SHUT_OFF_SHOOTERS:
                 leftShooterMotor.setPower(0);
                 rightShooterMotor.setPower(0);
                 newState(state.STATE_PARK_IN_CENTER);
                 break;
-            //Turning off shooter motors.
+                    //Turning off shooter motors.
 
             case STATE_PARK_IN_CENTER:
                 setPos(-70, .9);
@@ -199,7 +200,7 @@ public class ShootAndParkInCenter extends OpMode {
                 break;
 
             case STATE_STOP_MOVING:
-                 if (stateTime.time() >= 4) {
+                if (stateTime.time() >= 4) {
                     leftMotor.setPower(0);
                     rightMotor.setPower(0);
                 }
@@ -207,6 +208,7 @@ public class ShootAndParkInCenter extends OpMode {
         }
 
     }
+
 
     public void stop() {
     }

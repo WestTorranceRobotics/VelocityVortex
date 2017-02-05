@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -40,9 +41,9 @@ public class RobotHardware {
 
     //Sensors
     public OpticalDistanceSensor lineSensor    = null;
-    public ColorSensor beaconSensor              = null;
+    public ColorSensor beaconSensor            = null;
     public I2cDeviceSynch beaconSensorReader   = null;
-    public GyroSensor gyro                     = null;
+    public ModernRoboticsI2cGyro gyro          = null;
     public DigitalChannel teamSwitch           = null;//blue is false, red is true
 
 
@@ -77,9 +78,9 @@ public class RobotHardware {
 
         //Sensors
         beaconSensor = hwMap.colorSensor.get("colorsensor");
-        gyro = hwMap.gyroSensor.get("gyro");
+        gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("gyro");
         //teamSwitch = hwMap.digitalChannel.get("teamSwitch");
-        //lineSensor = hwMap.opticalDistanceSensor.get("lineSensor");
+        lineSensor = hwMap.opticalDistanceSensor.get("lineSensor");
 
 
         //Set the directions for each motor

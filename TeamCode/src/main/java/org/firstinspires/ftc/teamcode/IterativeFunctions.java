@@ -2,14 +2,21 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 
 public class IterativeFunctions {
 
     RobotHardware robot;
+    Telemetry robotTelemetry;
 
     public IterativeFunctions(RobotHardware hardware){
         robot = hardware;
+    }
+
+    public IterativeFunctions(RobotHardware hardware, Telemetry tele) {
+        robot = hardware;
+        robotTelemetry = tele;
     }
 
     public int degrees = 0;
@@ -84,20 +91,27 @@ public class IterativeFunctions {
         robot.rightMotor.setPower(0);
     }
 
+    public void endTurn() {
+        robot.leftMotor.setPower(0);
+        robot.rightMotor.setPower(0);
+        degrees = 0;
+        initheading = 0;
+    }
+
     public boolean doneDriving() {
         return (!robot.leftMotor.isBusy() && !robot.rightMotor.isBusy());
     }
 
     public void setDegrees(int degrees){
-        this.degrees = degrees/* * teamNumber()*/;
+        this.degrees = degrees;
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        initheading = robot.gyro.getHeading();
+        initheading = robot.gyro.getIntegratedZValue();
     }
 
     public boolean doneTurning (){
         //returning if the robot are done turning
-        return (Math.abs(robot.gyro.getHeading()-initheading) >= Math.abs(degrees));
+        return (Math.abs(robot.gyro.getIntegratedZValue() - initheading) >= Math.abs(degrees));
     }
 
     public void turn(){
@@ -115,24 +129,18 @@ public class IterativeFunctions {
     }
 
     public double PIDTurn(){
-        //TODO this function still does not yeild a perfect 90 degree turn which should be attainable to a certain degree. use telemetry to see how much the robot is actually turning
-        //TODO if the robot doesnt know its isnt turning 90 degrees, good  luck fixing it. my tips below could be the answer in either situation, but dont spend too much time on it if you dont understand it
-        double error = degrees - (robot.gyro.getHeading() - initheading);
-        double motorPower = .027 * error;
+        double error = degrees - (robot.gyro.getIntegratedZValue() - initheading);
+        double motorPower = -.0077 * error;
         return motorPower;
-        //TODO I would recommend adding a derivative term to this feedback loop, which may entail increasing the proportional gain
-        //TODO if you are confused by the derivative term, forget that word, its just a stupid calc term. all derivative means is rate of change
-        //TODO which means all you have to do is count the time between loops and see how many degress you go, divide and you have your rate in degrees/second
-        //TODO what may be easier is using the raw data from the gyro as your derivative, because the gyro integrates on the chip, which is why you get a heading and dont have to do all that stupid time math
-        //TODO this unitegrated rate may be robot.gyro.rawZ();, but i am unsure and a quick google search did not turn up any answer. remmeber to watch that video again if youre lost or havent seen it in the first place
-        //TODO heres the link https://www.youtube.com/watch?v=4Y7zG48uHRo
-        //TODO i also found this video which demonstrates PID on a real system well    https://www.youtube.com/watch?v=fusr9eTceEo
     }
 
     //TODO if you use PIDTurn, you need an exit condition. ill make an example of how it could work below
     public boolean PIDWithinTolerance() {
-        double error = degrees - (robot.gyro.getHeading() - initheading);
-        if (error <= 2){
+        double error = degrees - (robot.gyro.getIntegratedZValue() - initheading);
+        robotTelemetry.addData("error", error);
+        robotTelemetry.addData("init heading", initheading);
+        robotTelemetry.addData("target", degrees);
+        if (error <= 1){
             return true;
         } else {
             return false;
@@ -171,7 +179,10 @@ public class IterativeFunctions {
         robot.transportServo.setPosition(robot.transport1Down);
         robot.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //TODO I would try to use this if I were you guys, just another step to take out, but you may have to tweak this function a little, use it for servos and stuff
+        setRamServoLeft();
+        degrees = 0;
+        initheading = 0;
+        initEncoder = 0;
     }
 
     public void changeDriveTrainMode(DcMotor.RunMode mode){

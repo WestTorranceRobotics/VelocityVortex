@@ -73,7 +73,8 @@ public class ShootAndSingleBeacon extends OpMode
         STATE_TURN_ON_WHITE_LINE,
         STATE_CHOOSE_COLOR,
         STATE_RAM,
-        STATE_LAST_TIMER_LEL_HEHE_XD
+        STATE_LAST_TIMER_LEL_HEHE_XD,
+        STATE_NO,
     }
     private state currentState = null;
 
@@ -82,6 +83,7 @@ public class ShootAndSingleBeacon extends OpMode
     @Override
     public void init() {
         robot.initRobotHardware(hardwareMap);
+        robot.gyro.calibrate();
     }
 
     @Override
@@ -93,14 +95,15 @@ public class ShootAndSingleBeacon extends OpMode
     @Override
     public void start() {
         runtime.reset();
+        newState(state.STATE_MOVE_A_BIT);
     }
 
     @Override
     public void loop() {
 
         telemetry.addData("state", currentState);
-        telemetry.addData("Len", robot.leftMotor.getCurrentPosition());
-        telemetry.addData("Ren", robot.rightMotor.getCurrentPosition());
+
+
 
         if(robot.beaconSensor.blue()>robot.beaconSensor.red()) {
             beaconIsRed = false;
@@ -114,12 +117,12 @@ public class ShootAndSingleBeacon extends OpMode
             isPressed = false;
         }
 
+
         switch (currentState) {
 
-            case STATE_SPOOL_UP_SHOOTERS:
+            /*case STATE_SPOOL_UP_SHOOTERS:
                 robot.leftShooterMotor.setPower(.8);
                 robot.rightShooterMotor.setPower(.8);
-                fanctions.setTransportDown();
                 newState(state.STATE_WAIT);
                 break;
 
@@ -138,7 +141,7 @@ public class ShootAndSingleBeacon extends OpMode
             //Moving transport ramp up to shoot ball.
 
             case STATE_SET_THE_SHOOTER_BACK_TO_ZERO:
-                if (stateTime.time() >= 2) {
+                if (stateTime.time() >= 1.5) {
                     robot.leftShooterMotor.setPower(0);
                     robot.rightShooterMotor.setPower(0);
                     newState(state.STATE_WAIT_THREE);
@@ -146,61 +149,35 @@ public class ShootAndSingleBeacon extends OpMode
                 break;
 
             case STATE_WAIT_THREE:
-                if (stateTime.time() >= 2.5) {
-                    fanctions.setTransportDown();
+                if (stateTime.time() >= 2) {
+                    robot.transportServo.setPosition(.4);
                     newState(state.STATE_TURN_ON_SHOOTERS_TWO);
                 }
                 break;
 
             case STATE_TURN_ON_SHOOTERS_TWO:
-                if (stateTime.time() >= 0) {
+                if (stateTime.time() >= 1) {
                     robot.leftShooterMotor.setPower(.7);
                     robot.rightShooterMotor.setPower(.7);
-                    newState(state.STATE_WAIT_FOUR);
+                    newState(state.STATE_NO);
                 }
                 break;
             //Rev these shooters.
 
-            case STATE_WAIT_FOUR:
-                if (stateTime.time() >= 1.5) {
-                    newState(state.STATE_SET_SERVO_DOWN);
-                }
-                break;
-
-            case STATE_SET_SERVO_DOWN:
-                robot.leftShooterMotor.setPower(.7);
-                robot.rightShooterMotor.setPower(.7);
-                fanctions.setTransportDown();
-                newState(state.STATE_WAIT_TWO);
-                break;
-
-            case STATE_WAIT_TWO:
-                if (stateTime.time() >= 2) {
-                    newState(state.STATE_SHOOT_PARTICLE_TWO);
-                }
-                break;
-
-            case STATE_SHOOT_PARTICLE_TWO:
-                fanctions.setTransportUp();
-                newState(state.STATE_WAIT_FIVE);
-
-                break;
-            //Moving transport ramp up to shoot ball.
-
-            case STATE_WAIT_FIVE:
+            case STATE_NO:
                 if (stateTime.time() >= 1) {
-                    fanctions.setTransportDown();
+                    robot.transportServo.setPosition(.275);
                     newState(state.STATE_TURN_OFF_SHOOTER);
                 }
                 break;
-            //Waiting half a second to move transport ramp back down.
 
+            //Waiting half a second to move transport ramp back down.
             case STATE_TURN_OFF_SHOOTER:
                 robot.leftShooterMotor.setPower(0);
                 robot.rightShooterMotor.setPower(0);
                 newState(state.STATE_MOVE_A_BIT);
                 break;
-            //Turning off shooter motors.
+            //Turning off shooter motors.*/
 
             case STATE_MOVE_A_BIT:
                 fanctions.setPos(-10, .9);
@@ -209,9 +186,7 @@ public class ShootAndSingleBeacon extends OpMode
 
             case STATE_TIMER:
                 if (stateTime.time() >= 1){
-                    robot.leftMotor.setPower(0);
-                    robot.rightMotor.setPower(0);
-                    fanctions.setDegrees(-135);
+                    fanctions.setDegrees(90);
                     newState(state.STATE_TURN);
                 }
                 break;
@@ -225,7 +200,7 @@ public class ShootAndSingleBeacon extends OpMode
                 }
                 break;
 
-            case STATE_MOVE_A_LOT:
+            /* STATE_MOVE_A_LOT:
                 fanctions.setPos(60, .9);
                 newState(state.STATE_TIMER_TWO);
                 break;
@@ -252,6 +227,9 @@ public class ShootAndSingleBeacon extends OpMode
                 if (robot.lineSensor.getLightDetected() >= .35){
                     fanctions.setDegrees(90);
                     newState(state.STATE_TURN_ON_WHITE_LINE);
+                }else {
+                    robot.rightMotor.setPower(.6);
+                    robot.leftMotor.setPower(.6);
                 }
                 break;
 
@@ -284,7 +262,7 @@ public class ShootAndSingleBeacon extends OpMode
                     robot.leftMotor.setPower(0);
                     robot.rightMotor.setPower(0);
                 }
-                break;
+                break;*/
         }
     }
 
