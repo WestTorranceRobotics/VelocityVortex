@@ -48,7 +48,7 @@ public class IterativeFunctions {
         robot.leftMotor.setTargetPosition(ticks + currentleft);
         robot.rightMotor.setTargetPosition(ticks + currentright);
         robot.leftMotor.setPower(power);
-        robot.rightMotor.setPower(power * .4);
+        robot.rightMotor.setPower(power);
 
     }
 

@@ -1,57 +1,47 @@
-/*
-Copyright (c) 2016 Robert Atkinson
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification,
-are permitted (subject to the limitations in the disclaimer below) provided that
-the following conditions are met:
-
-Redistributions of source code must retain the above copyright notice, this list
-of conditions and the following disclaimer.
-
-Redistributions in binary form must reproduce the above copyright notice, this
-list of conditions and the following disclaimer in the documentation and/or
-other materials provided with the distribution.
-
-Neither the name of Robert Atkinson nor the names of his contributors may be used to
-endorse or promote products derived from this software without specific prior
-written permission.
-
-NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
-LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESSFOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="DoubleBeacon", group="WTR")  // @Autonomous(...) is the other common choice
-//@Disabled
-public class DoubleBeacon extends OpMode
-{
+//@Disabled 
+public class DoubleBeacon extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime stateTime = new ElapsedTime();
-    RobotHardware robot = new RobotHardware();
-    IterativeFunctions fanctions = new IterativeFunctions(robot);
-
-    boolean isPressed = false;
-    boolean isRed = true;
-    boolean beaconIsRed = false;
+    //RobotHardware robot = new RobotHardware();
+    //IterativeFunctions fanctions = new IterativeFunctions(robot);
 
     private enum state {
-        STATE_MOVE_A_BIT,
-        STATE_TIMER,
+        STATE_SPECIAL_SNOWFLAKE,
+        STATE_SPOOL_UP_SHOOTERS,
+        //Rev these shooters.
+        STATE_DRIVE_TO_VORTEX,
+        //Driving to vortex.
+        STATE_WAIT_FOR_SHOOTERS,
+        //Waiting for shooters to get power.
+        STATE_UP,
+        //Moving transport ramp up to shoot ball.
+        STATE_WAIT,
+        //Waiting half a second to move transport ramp back down.
+        STATE_WAIT_MORE,
+        STATE_UP2,
+        //Moving transport ramp up to shoot ball.
+        STATE_WAIT2,
+        //Waiting half a second to move transport ramp back down.
+        STATE_SHUT_OFF_SHOOTERS,
+        //Turning off shooter motors.
+        STATE_PARK_IN_CENTER,
+        STATE_STOP_MOVING,
+        STATE_WAIT_THRID,
+        STATE_WAIT_FOR_SHOOT,
+        STATE_WAIT_FOURTH,
         STATE_TURN,
         STATE_MOVE_A_LOT,
         STATE_TIMER_TWO,
@@ -61,219 +51,319 @@ public class DoubleBeacon extends OpMode
         STATE_CHOOSE_COLOR,
         STATE_RAM,
         STATE_LAST_TIMER_LEL_HEHE_XD,
-        STATE_BACK_UP_BOI,
-        STATE_TIMER_OPOP,
-        STATE_TURN_LEL,
-        STATE_FIND_WHITE_LINE_TWO,
-        STATE_TURN_ON_WHITE_LINE_TWO,
-        STATE_CHOOSE_COLOR_TWO,
-        STATE_RAM_TWO,
-        STATE_I_PROMISE_THIS_IS_THE_LAST_TIMER_INSERT_LENNY_HEHE_XD,
+        STATE_NOOOOO,
 
     }
     private state currentState = null;
 
+    public DcMotor  leftMotor         = null;
+    public DcMotor  rightMotor        = null;
+    public DcMotor  intakeMotor       = null;
+    public DcMotor  leftShooterMotor  = null;
+    public DcMotor  rightShooterMotor = null;
+    public ServoController servoController = null;
+    public Servo transportServo1 = null;
+    public ModernRoboticsI2cGyro gyro          = null;
+    public Servo ramServo        = null;
+    public OpticalDistanceSensor lineSensor    = null;
+    public ColorSensor beaconSensor = null;
+    boolean isPressed = true;
+    boolean isRed = false;
+    boolean beaconIsRed = true;
 
 
     @Override
     public void init() {
-        robot.initRobotHardware(hardwareMap);
+        leftMotor = hardwareMap.dcMotor.get("leftmotor");
+        rightMotor = hardwareMap.dcMotor.get("rightmotor");
+        intakeMotor = hardwareMap.dcMotor.get("inmotor");
+        leftShooterMotor = hardwareMap.dcMotor.get("LShootmotor");
+        rightShooterMotor = hardwareMap.dcMotor.get("RShootmotor");
+        ramServo = hardwareMap.servo.get("ramservo");
+        gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyro");
+        lineSensor = hardwareMap.opticalDistanceSensor.get("lineSensor");
+        beaconSensor = hardwareMap.colorSensor.get("colorsensor");
+
+        transportServo1 = hardwareMap.servo.get("transervo1");
+        //transportServo2 = hardwareMap.servo.get("transervo2");
+
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightMotor.setDirection(DcMotor.Direction.FORWARD);
+        intakeMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightShooterMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftShooterMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        servoController = hardwareMap.servoController.get("sv1");
+
+        telemetry.addData("CALIBRATION", "GYRO CALIBRATION IN PROGRESS...");
+        gyro.calibrate();
     }
 
     @Override
     public void init_loop() {
-    robot.ramServo.setPosition(0);
+        SetServo(0.40);
+        ramServo.setPosition(0.4);
+
+        if(!gyro.isCalibrating()) {
+            telemetry.addData("CALIBRATION", "CALIBRATION COMPLETE!");
+        }
+        telemetry.addData("gyro", gyro.getIntegratedZValue());
+
+        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     @Override
     public void start() {
         runtime.reset();
+        newState(state.STATE_FIND_WHITE_LINE);
     }
 
     @Override
     public void loop() {
 
         telemetry.addData("state", currentState);
-        telemetry.addData("Len", robot.leftMotor.getCurrentPosition());
-        telemetry.addData("Ren", robot.rightMotor.getCurrentPosition());
-
-        if(robot.beaconSensor.blue()>robot.beaconSensor.red()) {
-            beaconIsRed = false;
-        } else {
-            beaconIsRed = true;
-        }
+        telemetry.addData("light", lineSensor.getLightDetected());
+        telemetry.addData("blue", beaconIsRed);
 
         if(gamepad1.a && !isPressed){
-            isRed = !isRed; isPressed = true;
+            isRed = !isRed; isPressed = false;
         } else if(!gamepad1.a){
-            isPressed = false;
+            isPressed = true;
         }
+
+        if(beaconSensor.blue()>beaconSensor.red()) {
+            beaconIsRed = true;
+        } else {
+            beaconIsRed = false;
+        }
+
+        telemetry.addData("counter", blindcounter);
+        telemetry.addData("state", currentState);
 
         switch (currentState) {
 
-            case STATE_MOVE_A_BIT:
-                fanctions.setPos(-10, .9);
-                newState(state.STATE_TIMER);
+
+            /*case STATE_PARK_IN_CENTER:
+                setPos(200, .9);
+                newState(state.STATE_STOP_MOVING);
                 break;
 
-            case STATE_TIMER:
-                if (stateTime.time() >= 1){
-                    robot.leftMotor.setPower(0);
-                    robot.rightMotor.setPower(0);
-                    fanctions.setDegrees(-135);
+            case STATE_STOP_MOVING:
+                if (stateTime.time() >= 3.5) {
+                    setDegrees(270);
                     newState(state.STATE_TURN);
                 }
                 break;
 
             case STATE_TURN:
-                if (fanctions.PIDWithinTolerance()) {
-                    fanctions.endmove();
-                    newState(state.STATE_MOVE_A_LOT);
-                }else{
-                    fanctions.turn(fanctions.PIDTurn());
-                }
-                break;
-
-            case STATE_MOVE_A_LOT:
-                fanctions.setPos(60, .9);
-                newState(state.STATE_TIMER_TWO);
-                break;
-
-            case STATE_TIMER_TWO:
-                if (stateTime.time() >= 3.5){
-                    robot.leftMotor.setPower(0);
-                    robot.rightMotor.setPower(0);
-                    fanctions.setDegrees(-45);
-                    newState(state.STATE_TURN_AGAIN);
-                }
-                break;
-
-            case STATE_TURN_AGAIN:
-                if (fanctions.PIDWithinTolerance()){
-                    fanctions.endmove();
+                if (stateTime.time() >= 1) {
+                    endmove();
                     newState(state.STATE_FIND_WHITE_LINE);
-                }else{
-                    fanctions.turn(fanctions.PIDTurn());
                 }
-                break;
+                break;*/
+
 
             case STATE_FIND_WHITE_LINE:
-                if (robot.lineSensor.getLightDetected() >= .35){
-                    fanctions.setDegrees(90);
+                if (lineSensor.getLightDetected() >= .3){
+                    setDegrees(70);
                     newState(state.STATE_TURN_ON_WHITE_LINE);
+                }else {
+                    setPos(40, .6);
                 }
                 break;
 
             case STATE_TURN_ON_WHITE_LINE:
-                if (fanctions.PIDWithinTolerance()){
-                    fanctions.endmove();
+                if(PIDWithinTolerance() || stateTime.time()>=5) {
+                    endmove();
                     newState(state.STATE_CHOOSE_COLOR);
-                }else{
-                    fanctions.turn(fanctions.PIDTurn());
+                }else {
+                    turn(PIDTurn());
                 }
                 break;
 
             case STATE_CHOOSE_COLOR:
-                if (sameCola()) {
-                    robot.ramServo.setPosition(1);
+                if (!sameCola()){
+                    ramServo.setPosition(1);
                     newState(state.STATE_RAM);
-                } else {
-                    robot.ramServo.setPosition(0);
+                }else{
+                    ramServo.setPosition(0);
                     newState(state.STATE_RAM);
                 }
-                break;
 
             case STATE_RAM:
-                fanctions.setPos(6, 1);
-                newState(state.STATE_LAST_TIMER_LEL_HEHE_XD);
+                if (stateTime.time() >= 1) {
+                setPos(50, 1);
+                newState(state.STATE_LAST_TIMER_LEL_HEHE_XD);}
                 break;
 
             case STATE_LAST_TIMER_LEL_HEHE_XD:
+                if (stateTime.time()>= 1.5){
+                    setPos(-50, 1);
+                    newState(state.STATE_SHUT_OFF_SHOOTERS);
+                }
+                break;
+
+            case STATE_SHUT_OFF_SHOOTERS:
                 if (stateTime.time() >= 1){
-                    robot.leftMotor.setPower(0);
-                    robot.rightMotor.setPower(0);
-                    newState(state.STATE_BACK_UP_BOI);
+                    setDegrees(270);
+                    newState(state.STATE_TIMER_TWO);
                 }
                 break;
 
-            case STATE_BACK_UP_BOI:
-                fanctions.setPos(-10, .9);
-                newState(state.STATE_TIMER_OPOP);
-                break;
-
-            case STATE_TIMER_OPOP:
-                if (stateTime.time() >= .75){
-                    robot.leftMotor.setPower(0);
-                    robot.rightMotor.setPower(0);
-                    fanctions.setDegrees(-90);
-                    newState(state.STATE_TURN_LEL);
+            case STATE_TIMER_TWO:
+                if(PIDWithinTolerance() || stateTime.time()>=5) {
+                    endmove();
+                    newState(state.STATE_PARK_IN_CENTER);
+                }else {
+                    turn(PIDTurn());
                 }
                 break;
 
-            case STATE_TURN_LEL:
-                if (fanctions.PIDWithinTolerance()){
-                    fanctions.endmove();
-                    newState(state.STATE_FIND_WHITE_LINE_TWO);
+            case STATE_PARK_IN_CENTER:
+                if (lineSensor.getLightDetected() >= .3){
+                    setDegrees(70);
+                    newState(state.STATE_NOOOOO);
+                }else {
+                    setPos(40, .6);
+                }
+                break;
+
+            case STATE_NOOOOO:
+                if(PIDWithinTolerance() || stateTime.time()>=5) {
+                    endmove();
+                    newState(state.STATE_SPOOL_UP_SHOOTERS);
+                }else {
+                    turn(PIDTurn());
+                }
+                break;
+
+            case STATE_SPOOL_UP_SHOOTERS:
+                if (!sameCola()){
+                    ramServo.setPosition(1);
+                    newState(state.STATE_UP);
                 }else{
-                    fanctions.turn(fanctions.PIDTurn());
+                    ramServo.setPosition(0);
+                    newState(state.STATE_UP);
                 }
+
+            case STATE_UP:
+                if (stateTime.time() >= 1) {
+                    setPos(50, 1);
+                    newState(state.STATE_UP2);}
                 break;
 
-            case STATE_FIND_WHITE_LINE_TWO:
-                if (robot.lineSensor.getLightDetected() >= .35){
-                    fanctions.setDegrees(90);
-                    newState(state.STATE_TURN_ON_WHITE_LINE_TWO);
+            case STATE_UP2:
+                if (stateTime.time()>= 1.5){
+                    leftMotor.setPower(0);
+                    rightMotor.setPower(0);
                 }
                 break;
-
-            case STATE_TURN_ON_WHITE_LINE_TWO:
-                if (fanctions.PIDWithinTolerance()){
-                    fanctions.endmove();
-                    newState(state.STATE_CHOOSE_COLOR_TWO);
-                }else{
-                    fanctions.turn(fanctions.PIDTurn());
-                }
-                break;
-
-            case STATE_CHOOSE_COLOR_TWO:
-                if (sameCola()) {
-                    robot.ramServo.setPosition(1);
-                    newState(state.STATE_RAM_TWO);
-                } else {
-                    robot.ramServo.setPosition(0);
-                    newState(state.STATE_RAM_TWO);
-                }
-                break;
-
-            case STATE_RAM_TWO:
-                fanctions.setPos(6, 1);
-                newState(state.STATE_I_PROMISE_THIS_IS_THE_LAST_TIMER_INSERT_LENNY_HEHE_XD);
-                break;
-
-            case STATE_I_PROMISE_THIS_IS_THE_LAST_TIMER_INSERT_LENNY_HEHE_XD:
-                if (stateTime.time() >= 1){
-                    robot.leftMotor.setPower(0);
-                    robot.rightMotor.setPower(0);
-                }
         }
+
     }
 
-    @Override
+
     public void stop() {
     }
 
     private void newState(state newState) {
-        currentState = newState;
+        // Reset the state time, and then change to next state. 
         stateTime.reset();
+        currentState = newState;
+    }
+    public void setPos(double inches, double goes) {
+
+        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        int ticks = (int) (inches * (118.8356));
+        int currentleft = leftMotor.getCurrentPosition();
+        int currentright = rightMotor.getCurrentPosition();
+
+        leftMotor.setTargetPosition(ticks + currentleft);
+        rightMotor.setTargetPosition(ticks + currentright);
+        leftMotor.setPower(goes);
+        rightMotor.setPower(goes/**.65*/);
+
+    }
+
+    public void endmove() {
+        leftMotor.setPower(0);
+        rightMotor.setPower(0);
+    }
+
+    public boolean driveMotorsAreBusy() {
+
+        return (leftMotor.isBusy() || rightMotor.isBusy());
+    }
+
+    public boolean transportsAreUp (){
+        return currentPos <= transport1Up;
+    }
+
+    public void SetServo(double pos){
+        currentPos = pos;
+        transportServo1.setPosition(pos);
+    }
+
+    public double currentPos = 0;
+    public double transport1Up = 0.37;
+
+    public void setDegrees(int degrees){
+        this.degrees = degrees;
+        leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        initheading = gyro.getIntegratedZValue();
+    }
+    public void turn(){
+        //setting the motors to turning power
+        int multiplier = (degrees/Math.abs(degrees));
+        leftMotor.setPower(.5 * multiplier);
+        rightMotor.setPower(-.5 * multiplier);
+    }
+
+    public boolean doneTurning (){
+        //returning if the robot are done turning
+        return (Math.abs(gyro.getIntegratedZValue() - initheading) >= Math.abs(degrees));
+    }
+
+    public double PIDTurn(){
+        double error = degrees - (gyro.getIntegratedZValue() - initheading);
+        double motorPower = -.0077 * error;
+        return motorPower;
+    }
+
+    public void turn(double power){
+        //overloading thing
+        leftMotor.setPower(power);
+        rightMotor.setPower(-power);
+    }
+
+    public boolean PIDWithinTolerance() {
+        double error = degrees - (gyro.getIntegratedZValue() - initheading);
+        if (error <= 4){
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean sameCola(){
         if(beaconIsRed && isRed) {
             return true;
         } else if (!beaconIsRed && !isRed) {
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
     }
-}
+
+    public int initheading = 0;
+
+    public int degrees = 0;
+
+    public int blindcounter = 0;
+
+    public boolean iswhite = false;
+} 

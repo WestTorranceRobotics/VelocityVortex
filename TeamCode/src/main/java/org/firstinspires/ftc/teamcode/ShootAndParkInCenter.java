@@ -200,7 +200,7 @@ public class ShootAndParkInCenter extends OpMode {
                 break;
 
             case STATE_STOP_MOVING:
-                if (stateTime.time() >= 4) {
+                if (stateTime.time() >= 2.25) {
                     leftMotor.setPower(0);
                     rightMotor.setPower(0);
                 }
@@ -229,7 +229,7 @@ public class ShootAndParkInCenter extends OpMode {
         leftMotor.setTargetPosition(ticks + currentleft);
         rightMotor.setTargetPosition(ticks + currentright);
         leftMotor.setPower(goes);
-        rightMotor.setPower(goes*.55);
+        rightMotor.setPower(goes);
     }
 
     public void endmove() {

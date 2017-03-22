@@ -5,15 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="ShootAndSinlgeBeaconRedSide", group="WTR")  // @Autonomous(...) is the other common choice
+@Autonomous(name="PrayToTamaki", group="WTR")  // @Autonomous(...) is the other common choice
 //@Disabled 
-public class ShootandSingleBeaconTry3 extends OpMode {
+public class PRAYTOTAMAKI extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime stateTime = new ElapsedTime();
     //RobotHardware robot = new RobotHardware();
@@ -53,10 +52,6 @@ public class ShootandSingleBeaconTry3 extends OpMode {
         STATE_RAM,
         STATE_LAST_TIMER_LEL_HEHE_XD,
         STATE_NOOOOO,
-        STATE_ONE,
-        STATE_TWO,
-        STATE_THREE,
-        STATE_FOUR
 
     }
     private state currentState = null;
@@ -132,6 +127,11 @@ public class ShootandSingleBeaconTry3 extends OpMode {
         telemetry.addData("light", lineSensor.getLightDetected());
         telemetry.addData("blue", beaconIsRed);
 
+        telemetry.addData("plsm8turnright",gyro.getIntegratedZValue());
+        telemetry.addData("withinTolerance", PIDWithinTolerance());
+        telemetry.addData("rightmotor", rightMotor.getPower());
+        telemetry.addData("leftmotor", leftMotor.getPower());
+
         if(gamepad1.a && !isPressed){
             isRed = !isRed; isPressed = false;
         } else if(!gamepad1.a){
@@ -171,16 +171,16 @@ public class ShootandSingleBeaconTry3 extends OpMode {
 
 
             case STATE_FIND_WHITE_LINE:
-                if (lineSensor.getLightDetected() >= .3){
-                    setDegrees(79);
+                //if (lineSensor.getLightDetected() >= .35){
+                    setDegrees(-90);
                     newState(state.STATE_TURN_ON_WHITE_LINE);
-                }else {
-                    setPos(40, .4);
-                }
+                //}else {
+                    //setPos(40, .6);
+                //}
                 break;
 
             case STATE_TURN_ON_WHITE_LINE:
-                if(PIDWithinTolerance() || stateTime.time()>=3.5) {
+                if(PIDWithinTolerance() || stateTime.time()>=5) {
                     endmove();
                     newState(state.STATE_CHOOSE_COLOR);
                 }else {
@@ -188,15 +188,14 @@ public class ShootandSingleBeaconTry3 extends OpMode {
                 }
                 break;
 
-            case STATE_CHOOSE_COLOR:
+            /*case STATE_CHOOSE_COLOR:
                 if (!sameCola()){
-                    ramServo.setPosition(1);
-                    newState(state.STATE_RAM);
-                }else{
                     ramServo.setPosition(0);
                     newState(state.STATE_RAM);
+                }else{
+                    ramServo.setPosition(1);
+                    newState(state.STATE_RAM);
                 }
-                break;
 
             case STATE_RAM:
                 if (stateTime.time() >= 1) {
@@ -307,20 +306,8 @@ public class ShootandSingleBeaconTry3 extends OpMode {
                 leftShooterMotor.setPower(0);
                 rightShooterMotor.setPower(0);
                 newState(state.STATE_PARK_IN_CENTER);
-                break;
+                break;*/
             //Turning off shooter motors.
-
-            case STATE_PARK_IN_CENTER:
-                setPos(-50,1);
-                newState(state.STATE_ONE);
-                break;
-
-            case STATE_ONE:
-                if (stateTime.time() >= 2.5){
-                    leftMotor.setPower(0);
-                    rightMotor.setPower(0);
-                }
-                break;
         }
 
     }
@@ -345,7 +332,7 @@ public class ShootandSingleBeaconTry3 extends OpMode {
         leftMotor.setTargetPosition(ticks + currentleft);
         rightMotor.setTargetPosition(ticks + currentright);
         leftMotor.setPower(goes);
-        rightMotor.setPower(goes/**.65*/);
+        rightMotor.setPower(goes*.65);
 
     }
 
@@ -403,6 +390,8 @@ public class ShootandSingleBeaconTry3 extends OpMode {
 
     public boolean PIDWithinTolerance() {
         double error = degrees - (gyro.getIntegratedZValue() - initheading);
+        telemetry.addData("error", error);
+        telemetry.addData("intheading", initheading);
         if (error <= 4){
             return true;
         } else {

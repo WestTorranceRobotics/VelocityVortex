@@ -5,15 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="ShootAndSinlgeBeaconRedSide", group="WTR")  // @Autonomous(...) is the other common choice
+@Autonomous(name="BeaconShootBeacon", group="WTR")  // @Autonomous(...) is the other common choice
 //@Disabled 
-public class ShootandSingleBeaconTry3 extends OpMode {
+public class BeaconShootBeacon extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime stateTime = new ElapsedTime();
     //RobotHardware robot = new RobotHardware();
@@ -56,7 +55,12 @@ public class ShootandSingleBeaconTry3 extends OpMode {
         STATE_ONE,
         STATE_TWO,
         STATE_THREE,
-        STATE_FOUR
+        STATE_FOUR,
+        STATE_FIVE,
+        STATE_SIX,
+        STATE_SEVEN,
+        STATE_EIGHT,
+        STATE_NINE,
 
     }
     private state currentState = null;
@@ -172,15 +176,15 @@ public class ShootandSingleBeaconTry3 extends OpMode {
 
             case STATE_FIND_WHITE_LINE:
                 if (lineSensor.getLightDetected() >= .3){
-                    setDegrees(79);
+                    setDegrees(70);
                     newState(state.STATE_TURN_ON_WHITE_LINE);
                 }else {
-                    setPos(40, .4);
+                    setPos(40, .6);
                 }
                 break;
 
             case STATE_TURN_ON_WHITE_LINE:
-                if(PIDWithinTolerance() || stateTime.time()>=3.5) {
+                if(PIDWithinTolerance() || stateTime.time()>=5) {
                     endmove();
                     newState(state.STATE_CHOOSE_COLOR);
                 }else {
@@ -196,7 +200,6 @@ public class ShootandSingleBeaconTry3 extends OpMode {
                     ramServo.setPosition(0);
                     newState(state.STATE_RAM);
                 }
-                break;
 
             case STATE_RAM:
                 if (stateTime.time() >= 1) {
@@ -306,21 +309,74 @@ public class ShootandSingleBeaconTry3 extends OpMode {
             case STATE_SHUT_OFF_SHOOTERS:
                 leftShooterMotor.setPower(0);
                 rightShooterMotor.setPower(0);
-                newState(state.STATE_PARK_IN_CENTER);
+                newState(state.STATE_ONE);
                 break;
             //Turning off shooter motors.
 
-            case STATE_PARK_IN_CENTER:
-                setPos(-50,1);
-                newState(state.STATE_ONE);
+            case STATE_ONE:
+                if (stateTime.time()>= 1.5){
+                    setPos(-50, 1);
+                    newState(state.STATE_TWO);
+                }
                 break;
 
-            case STATE_ONE:
-                if (stateTime.time() >= 2.5){
+            case STATE_TWO:
+                if (stateTime.time() >= 1){
+                    setDegrees(270);
+                    newState(state.STATE_THREE);
+                }
+                break;
+
+            case STATE_THREE:
+                if(PIDWithinTolerance() || stateTime.time()>=5) {
+                    endmove();
+                    newState(state.STATE_PARK_IN_CENTER);
+                }else {
+                    turn(PIDTurn());
+                }
+                break;
+
+            case STATE_PARK_IN_CENTER:
+                if (lineSensor.getLightDetected() >= .3){
+                    setDegrees(70);
+                    newState(state.STATE_FOUR);
+                }else {
+                    setPos(40, .6);
+                }
+                break;
+
+            case STATE_FOUR:
+                if(PIDWithinTolerance() || stateTime.time()>=5) {
+                    endmove();
+                    newState(state.STATE_FIVE);
+                }else {
+                    turn(PIDTurn());
+                }
+                break;
+
+            case STATE_FIVE:
+                if (!sameCola()){
+                    ramServo.setPosition(1);
+                    newState(state.STATE_SIX);
+                }else{
+                    ramServo.setPosition(0);
+                    newState(state.STATE_SIX);
+                }
+
+            case STATE_SIX:
+                if (stateTime.time() >= 1) {
+                    setPos(50, 1);
+                    newState(state.STATE_SEVEN);
+                }
+                break;
+
+            case STATE_SEVEN:
+                if (stateTime.time()>= 1.5){
                     leftMotor.setPower(0);
                     rightMotor.setPower(0);
                 }
                 break;
+
         }
 
     }
